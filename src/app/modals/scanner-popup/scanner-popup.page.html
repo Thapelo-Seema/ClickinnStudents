@@ -1,0 +1,17 @@
+<ion-content color="light" class="ion-padding">
+	<h1 class="ion-text-center" style="color: grey"><b>AREA SCAN RESULTS</b></h1>
+	<ion-item lines="none" color="light">
+		<p style="font-size: 1.4em" class="ion-text-wrap">
+			<b>{{results_scanned}}</b> rooms scanned around <b>{{search_institution}}</b>
+		</p>
+	</ion-item>
+	<ion-item lines="none" color="light">
+		<p style="font-size: 1.4em; color: green" class="ion-text-wrap">
+			<b>{{results_matched}}</b> matches found !
+		</p>
+	</ion-item>
+	<div class="ion-text-center">
+		<ion-button mode="ios" (click)="dismiss()" color="danger">Cancel</ion-button>
+		<ion-button mode="ios" color="success"  (click)="continue()" >View Matches</ion-button>
+	</div>
+</ion-content>

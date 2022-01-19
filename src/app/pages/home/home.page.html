@@ -1,0 +1,189 @@
+<ion-header mode="ios" class="ion-no-border">
+  <ion-toolbar color="thapsblue">
+    <ion-title>
+      <h1 class="main-header4">Clickinn</h1>
+    </ion-title>
+    <!-- <ion-buttons slot="start" >
+      <ion-menu-button auto-hide="false" color="thapsblue"></ion-menu-button>
+    </ion-buttons>
+    
+
+    <ion-buttons slot="end">
+      <ion-button class="badge-button" color="thapsblue">
+        Agents
+        <ion-icon name="cart-outline" color="warning">
+        </ion-icon>
+        <ion-badge class="badge-one" color="danger" *ngIf="cart.length > 0">{{ cart.length }}</ion-badge>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-buttons slot="end">
+      <ion-button class="badge-button" (click)="gotoSignin()" color="thapsblue">
+        <ion-icon name="person-circle-outline" color="warning">
+        </ion-icon>
+        Landlords
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button class="badge-button" (click)="gotoSignin()" color="thapsblue">
+        <ion-icon name="person-circle-outline" color="warning">
+        </ion-icon>
+        Students
+      </ion-button>
+    </ion-buttons> -->
+  </ion-toolbar>
+</ion-header>
+
+
+
+<ion-content no-padding>
+
+  <!-- ############################################# Updated #################################################-->
+  <!-- ##  -Fixed attribute tells Ionic’s grid to use the max-width corresponding to the current breakpoint ## -->
+  <!-- ##  -To edit breakpoint go to variables.css and edit --ion-grid-width- : value  ###-->
+  <!-- ####################################################################################################### -->
+  <ion-grid>
+    <h5 class="ion-text-center main-header5">Africa's first online accommodation call-center</h5>
+    <ion-grid fixed class="ion-no-padding ion-margin-bottom ion-padding-horizontal">
+      <ion-searchbar mode="ios" placeholder="Start searching...." (click)="openSearchModal(user.uid)" search-icon="search-outline">
+      </ion-searchbar>
+    </ion-grid>
+      <!--*********** Banner  ***********-->
+      <ion-slides class="horizontal-scroll-banner slide-left" pager=true [options]="bannerSlideOption" #slidesThree mode="ios"> 
+        <ion-slide tappable class="shop-main-h-card shop-banner " *ngFor="let bi of banners; let i = index" (click)="openSpecialModal(bi.id)">
+          <div class="shop-banner-bg ion-text-uppercase"  [ngStyle]="{'background-image': 'url(' + bi?.pic+ ')'}">
+            <div id="main-container">
+              <p > <strong class="card2-title ion-text-wrap">{{bi?.title}}</strong></p>  
+            </div>                      
+          </div>
+        </ion-slide>
+      </ion-slides>
+
+
+      <!--*********** Recommened ***********-->
+      <ion-item lines="none">
+        <h1 class="main-header5">Recommended Places</h1>
+      </ion-item>
+
+      <ion-slides class="swiper-container" pager= false [options]="slideOption" #slidesTwo mode="ios">
+        <ion-slide tappable  *ngFor="let rec of recommended" (click)="openDetail(rec?.room_id)"> 
+          <ion-card class="shop-main-h-card shop-card-tall   slide-right">
+            <!-- <div *ngIf="recommended.discount" class="ribbon">SALE</div> -->
+            <div class="shop-div-tall-bg" [ngStyle]="{'background-image': 'url(' + rec.display_pic_url+ ')'}"> </div>
+            <!--<div class="ion-margin-top">{{recommended.name}}</div>
+                    <ion-icon  style="font-size: 14px !important;" color="warning" *ngFor="let i of [0,1,2,3,4]" [name]="i < recommended.rating  ? 'star' : 'star-outline'"></ion-icon>
+                    <div class="main-b-header7" color="green">${{recommended.price}}</div> -->
+            <div class="ion-margin-top main-header8" text-wrap>{{rec.property?.address.neighbourhood}}</div>
+            <ion-icon style="font-size: 12px !important;" color="warning" *ngFor="let i of [0,1,2,3,4]"
+              [name]="i < 3  ? 'star' : 'star-outline'"></ion-icon>
+            <div class="main-b-header9">
+              <ion-text color="grey"> {{rec.rent | currency : 'ZAR'}}</ion-text>
+            </div>
+            <!-- <div class="margin-bottom-10"></div> -->
+          </ion-card>
+        </ion-slide>
+      </ion-slides>
+
+
+      <!--*********** Category  ***********-->
+      <ion-item lines="none">
+        <h1 class="main-header5">For Who ?</h1>
+          <ion-button slot="end" fill="clear" color="dark" size="small" routerLink="/shopping-category">more</ion-button>
+      </ion-item>
+
+      <!-- <ion-list-header class="margin-bottom-10">
+        <ion-label class="margin-top-3 main-header5">Category</ion-label>
+        <ion-button color="dark" size="small" routerLink="/shopping-category">more</ion-button>
+      </ion-list-header> -->
+      <ion-slides class="swiper-container slide-left ion-padding-bottom" pager= false [options]="slideOption" #slidesThree>
+        <ion-slide (click)="openRoleModal(1)" > 
+          <ion-card  class="shop-main-h-card shop-card-s-wide " >
+                  <div class="shop-card-s-wide-bg ion-text-uppercase" [ngStyle]="{'background-image': 'url( ../assets/imgs/SA_Land.jpg)'}">
+                      <h2 class="shop-card-s-wide-title"> Students</h2>                           
+                  </div>
+          </ion-card>
+        </ion-slide>
+        <ion-slide (click)="openRoleModal(1)"> 
+          <ion-card  class="shop-main-h-card shop-card-s-wide " >
+                  <div class="shop-card-s-wide-bg ion-text-uppercase" [ngStyle]="{'background-image': 'url( ../assets/imgs/SA_Landlo.jpg)'}">
+                      <h2 class="shop-card-s-wide-title"> Landlords</h2>                           
+                  </div>
+          </ion-card>
+        </ion-slide>
+        <ion-slide (click)="openRoleModal(1)"> 
+          <ion-card  class="shop-main-h-card shop-card-s-wide " >
+                  <div class="shop-card-s-wide-bg ion-text-uppercase" [ngStyle]="{'background-image': 'url( ../assets/imgs/SA_Lan.jpg)'}">
+                      <h2 class="shop-card-s-wide-title"> Agents</h2>                           
+                  </div>
+          </ion-card>
+        </ion-slide>
+        <ion-slide (click)="openRoleModal(1)"> 
+          <ion-card  class="shop-main-h-card shop-card-s-wide " >
+                  <div class="shop-card-s-wide-bg ion-text-uppercase" [ngStyle]="{'background-image': 'url( ../assets/imgs/SA_La.jpg)'}">
+                      <h2 class="shop-card-s-wide-title"> Maintainence Personell</h2>                           
+                  </div>
+          </ion-card>
+        </ion-slide>
+
+      </ion-slides>        
+      <div class="margin-bottom-10"></div>
+
+        <!-- <div  class="top-horizontal-scroll  slide-left  "  >
+          <ion-icon class="padding-left-15" *ngFor="let category of categories | async"
+          (click)="openDetail('shopping-list',category.id)" [name]="category.icon" [color]="category.color" slot="icon-only"
+            class="component-icon size50 component-icon-primary" (click)="openMap()"></ion-icon>
+        </div> -->
+
+
+
+
+
+
+
+      <!--*********** Promotion  ***********-->
+      <!-- <ion-item lines="none">
+        <h1 class="main-header5">Promotion items</h1>
+      </ion-item>
+
+      <ion-slides class="swiper-container" pager= false [options]="slideOption" #slidesTwo>
+        <ion-slide *ngFor="let promotion of promotions | async" (click)="openDetail('shopping-detail',promotion.id)"> 
+           
+          <ion-card class="shop-main-h-card shop-card-tall slide-right " >
+              
+              <div class="shop-div-tall-bg" [ngStyle]="{'background-image': 'url(' + promotion.image+ ')'}"> 
+                <div *ngIf="promotion.new" class="shopping-tags">New</div>
+              </div>
+              
+              <div class="ion-margin-top main-header8" text-wrap>{{promotion.name}}</div>
+
+              <ion-icon style="font-size: 12px !important;" color="warning" *ngFor="let i of [0,1,2,3,4]"
+                [name]="i < promotion.rating  ? 'star' : 'star-outline'">
+              </ion-icon>
+          
+              <div *ngIf="!promotion.discount" class="main-b-header9">
+                <ion-text color="grey">{{promotion.price | currency}}</ion-text>
+              </div>
+              <div *ngIf="promotion.discount" class="main-b-header9 ">
+                <ion-text color="grey">{{promotion.discount_price | currency}}&nbsp;&nbsp;</ion-text>
+                <ion-text color="lightgrey" class="discount">{{promotion.price | currency}}</ion-text>
+              </div>
+            </ion-card>
+        </ion-slide>
+      </ion-slides> -->
+
+      <!--*********** Group by brand  ***********-->
+      <!-- 
+      <ion-item lines="none">
+        <h1 class="main-header5">Top Brands</h1>
+      </ion-item>
+      <div class="top-horizontal-scroll  slide-left ">
+        <ion-card tappable class="shop-main-h-card shop-card-s-wide " *ngFor="let group of groups | async "
+          (click)="openDetail('shopping-group',group.id)">
+          <div class="card-s-wide-bg ion-text-uppercase" [ngStyle]="{'background-image': 'url(' + group.image+ ')'}">
+            <h2 class="card-s-wide-title"> {{group.name}}</h2> 
+          </div>
+        </ion-card>
+      </div> -->
+      <!-- <div class="footer-box"></div> -->
+  </ion-grid>
+</ion-content>

@@ -1,0 +1,7 @@
+{
+  "name": "Clickinn",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
