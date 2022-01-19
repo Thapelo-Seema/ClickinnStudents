@@ -43,17 +43,19 @@
   <!-- ##  -To edit breakpoint go to variables.css and edit --ion-grid-width- : value  ###-->
   <!-- ####################################################################################################### -->
   <ion-grid>
-    <h5 class="ion-text-center main-header5">Africa's first online accommodation call-center</h5>
+    <h5 class="ion-text-center main-header5 ion-margin-horizontal">Africa's online accommodation call-center</h5>
     <ion-grid fixed class="ion-no-padding ion-margin-bottom ion-padding-horizontal">
-      <ion-searchbar mode="ios" placeholder="Start searching...." (click)="openSearchModal(user.uid)" search-icon="search-outline">
-      </ion-searchbar>
+      <ion-button mode="ios" (click)="openSearchModal(user.uid)" expand="block" color="thapsblue" fill="outline">
+        <ion-icon name="search-outline" slot="end" color="thapsblue"></ion-icon>
+        Get Started
+      </ion-button>
     </ion-grid>
       <!--*********** Banner  ***********-->
       <ion-slides class="horizontal-scroll-banner slide-left" pager=true [options]="bannerSlideOption" #slidesThree mode="ios"> 
         <ion-slide tappable class="shop-main-h-card shop-banner " *ngFor="let bi of banners; let i = index" (click)="openSpecialModal(bi.id)">
           <div class="shop-banner-bg ion-text-uppercase"  [ngStyle]="{'background-image': 'url(' + bi?.pic+ ')'}">
-            <div id="main-container">
-              <p > <strong class="card2-title ion-text-wrap">{{bi?.title}}</strong></p>  
+            <div id="main-container" style="background-color: rgba(0, 0, 0, 0.8);">
+              <p><b><strong class="card2-title ion-text-wrap">{{bi?.title}}</strong></b></p>  
             </div>                      
           </div>
         </ion-slide>
@@ -86,10 +88,7 @@
 
 
       <!--*********** Category  ***********-->
-      <ion-item lines="none">
-        <h1 class="main-header5">For Who ?</h1>
-          <ion-button slot="end" fill="clear" color="dark" size="small" routerLink="/shopping-category">more</ion-button>
-      </ion-item>
+      
 
       <!-- <ion-list-header class="margin-bottom-10">
         <ion-label class="margin-top-3 main-header5">Category</ion-label>

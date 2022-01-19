@@ -95,7 +95,7 @@ export class HomePage {
         this.room_svc.getRecommended()
         .subscribe(rec =>{
           this.recommended = rec;
-          console.log(this.recommended);
+          //console.log(this.recommended);
         })
 
       }else{
@@ -110,7 +110,7 @@ export class HomePage {
           this.room_svc.getRecommended()
           .subscribe(rec =>{
             this.recommended = rec;
-            console.log(this.recommended);
+            //console.log(this.recommended);
           })
         })
         .catch(err =>{
