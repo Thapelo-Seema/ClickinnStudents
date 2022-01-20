@@ -63,8 +63,11 @@ export class AgentScanningPage implements OnInit {
               this.agent.current_job = this.search.id;
             
               this.user_svc.updateUser(this.agent);
+            }else if(this.agent.contacts.indexOf(this.search.searcher.uid) != -1){
+              let index = this.agent.contacts.indexOf(this.search.searcher.uid);
+              let thread_id = this.agent.thread_ids[index];
+              this.router.navigate(['/chat', {'thread_id': thread_id}])
             }
-            
           }
         })
       })

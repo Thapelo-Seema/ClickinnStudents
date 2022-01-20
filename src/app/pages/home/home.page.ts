@@ -10,8 +10,7 @@ import { BannerDetailsPage } from '../../pages/banner-details/banner-details.pag
 import { RolesPage } from '../roles/roles.page';
 import { IonicComponentService } from '../../services/ionic-component.service';
 import { UsersService } from '../../object-init/users.service';
-//import { ShoppingSpecialPageModule } from '../shopping-special/shopping-special.module';
-//import { HideHeaderConfig } from '../../shared/hide-header.directive';
+import { SearchFeedService } from '../../services/search-feed.service';
 
 import {take} from 'rxjs/operators';
 import { Client } from 'src/app/models/client.model';
@@ -66,7 +65,8 @@ export class HomePage {
     public router: Router,
     private ionicComponentService: IonicComponentService,
     private modalController: ModalController,
-    private authService: AuthService
+    private authService: AuthService,
+    private searchfeed_svc: SearchFeedService
   ) {
     this.user = this.user_init_svc.defaultClient();
   }
@@ -82,6 +82,19 @@ export class HomePage {
         .subscribe(u =>{
           if(u){
             this.user = this.user_init_svc.copyClient(u);
+            if(this.user.current_job != ""){
+              this.searchfeed_svc.getSearch(this.user.current_job)
+              .pipe(take(1))
+              .subscribe(sch =>{
+                if( sch.agent && sch.agent.contacts.indexOf(this.user.uid) != -1){
+                  let index = sch.agent.contacts.indexOf(this.user.uid);
+                  let thread_id = sch.agent.thread_ids[index];
+                  this.router.navigate(['/chat', {'thread_id': thread_id}])
+                }else{
+                  this.router.navigate(['/agent-scanning', {'search_id': sch.id}])
+                }
+              })
+            }
           }else{
             this.user_svc.createClient(this.user);
           }

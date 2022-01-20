@@ -33,5 +33,7 @@ export interface Client{
 	online: boolean;
 	user_type: string;
 	typing: boolean;
+	contacts?: string[];
+	thread_ids?: string[];
 	uid: string;
 }

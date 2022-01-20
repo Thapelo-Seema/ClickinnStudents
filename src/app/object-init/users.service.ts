@@ -16,6 +16,7 @@ export class UsersService {
       agreed_to_terms: false,
       banking_details: this.defaultBankingDetails(),
       business_areas: [],
+      neighbourhoods: [],
       current_job: "",
       firstime: true,
       firstname: "",
@@ -42,6 +43,8 @@ export class UsersService {
       rating: 0,
       online: false,
       typing: false,
+      contacts: [],
+      thread_ids: [],
       user_type: "" 
     }
     return user;
@@ -53,6 +56,7 @@ export class UsersService {
       agreed_to_terms: usr.agreed_to_terms || false,
       banking_details: usr.banking_details || this.defaultBankingDetails(),
       business_areas: usr.business_areas || [],
+      neighbourhoods: usr.neighbourhoods || [],
       current_job: usr.current_job || "",
       firstime: usr.firstime || true,
       firstname: usr.firstname || "",
@@ -79,6 +83,8 @@ export class UsersService {
       rating: usr.rating || 0,
       online: usr.online || false,
       typing: usr.typing || false,
+      contacts: usr.contacts || [],
+      thread_ids: usr.thread_ids || [],
       user_type: ""
     }
     return user;
@@ -116,6 +122,8 @@ export class UsersService {
       rating: 0,
       online: false,
       typing: false,
+      contacts: [],
+      thread_ids: [],
       user_type: "" 
     }
     return user;
@@ -153,6 +161,8 @@ export class UsersService {
       rating: usr.rating || 0,
       online: usr.online || false,
       typing: usr.typing || false,
+      contacts: usr.contacts || [],
+      thread_ids: usr.thread_ids || [],
       user_type: ""
     }
     return user;

@@ -68,6 +68,8 @@ export class AccommodationSearchPage implements OnInit {
       .then(() =>{
         this.ion_component_svc.dismissLoading();
         this.close();
+        this.search.searcher.current_job = this.search.id;
+        this.user_svc.updateClient(this.search.searcher);
         this.router.navigate(['/results-scanning', {search_id: this.search.id}])
       })
       .catch(err =>{

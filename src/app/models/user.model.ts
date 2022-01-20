@@ -9,6 +9,7 @@ export interface User{
 	agreed_to_terms: boolean;
 	banking_details: BankingDetails;
 	business_areas: any[];
+	neighbourhoods?: string[];
 	contracts: any[];
 	current_job: string;
 	display_name: string;
@@ -33,5 +34,7 @@ export interface User{
 	online: boolean;
 	user_type: string;
 	typing: boolean;
+	contacts?: string[];
+	thread_ids?: string[];
 	uid: string;
 }
