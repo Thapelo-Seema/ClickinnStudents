@@ -90,12 +90,34 @@ async presentToast(msg,duration) {
   toast.present();
 }
 
+async presentAgentSearchToast(header,iconname,icontext,msg,position,duration) {
+  const toast = await this.toastController.create({
+    header: header,
+    message: msg,
+    duration: duration,
+    color:"thapsblue",
+    position: position,
+    buttons: [
+      {
+        text: 'Click Here To Browse Results On Your Own',
+        icon: "arrow-redo",
+        cssClass: "toast-button",
+        role: 'cancel',
+        handler: () => {
+          console.log('Cancel clicked');
+        }
+      }
+    ]
+  });
+  toast.present();
+}
+
 async presentToastWithOptions(header,iconname,icontext,msg,position,duration) {
   const toast = await this.toastController.create({
     header: header,
     message: msg,
     duration: duration,
-    color:"dark",
+    color:"light",
     position: position,
     buttons: [
       {

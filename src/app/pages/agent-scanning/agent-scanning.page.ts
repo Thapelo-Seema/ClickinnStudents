@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ModalController, AlertController, ToastController } from '@ionic/angular';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ScannerPopupPage } from '../../modals/scanner-popup/scanner-popup.page';
 import { MapsService } from '../../services/maps.service';
 import { SearchFeedService } from '../../services/search-feed.service';
 import { take } from 'rxjs/operators';
@@ -10,6 +9,8 @@ import { RoomSearchService } from '../../object-init/room-search.service';
 import { MarkerOptions } from '../../models/marker-options.model';
 import { RoomService } from '../../services/room.service';
 import { IonicComponentService } from '../../services/ionic-component.service';
+import { User } from 'src/app/models/user.model';
+import { UserService } from '../../services/user.service';
 
 declare var google: any;
 
@@ -23,11 +24,14 @@ export class AgentScanningPage implements OnInit {
   @ViewChild('map', {read: ElementRef, static: false}) mapRef: ElementRef;
   map: any;
   search: RoomSearch;
+  agent: User = null;
   scanning_done: boolean = false;
   constructor(
     public modalCtrl: ModalController,
+    public toast_controller: ToastController,
     private alert_controller: AlertController, 
     private ionic_component_svc: IonicComponentService,
+    private user_svc: UserService,
     public maps_svc: MapsService,
     private actRoute: ActivatedRoute, 
     private router: Router, 
@@ -44,16 +48,24 @@ export class AgentScanningPage implements OnInit {
       .subscribe(sch =>{
         this.search = sch;
         this.showMap();
-        this.ionic_component_svc.presentToast("Scanning for agents", 5000);
         //launch search
-        this.sf_svc.getRoomSearchResults(this.search)
-        .pipe(take(1))
+        this.sf_svc.getAgentsForSearch(this.search)
         .subscribe(data =>{
           this.scanning_done = true;
-          //this.alert_controller.dismiss()
-          /* .then(() =>{
-            this.presentAlertPrompt(data, this.search);
-          }) */
+          if(data){
+            this.toast_controller.dismiss()
+            .catch(err =>{
+              console.log(err);
+            })
+            this.agent = data.pop();
+            if(this.agent.current_job == ""){
+              //alert agent of job
+              this.agent.current_job = this.search.id;
+            
+              this.user_svc.updateUser(this.agent);
+            }
+            
+          }
         })
       })
     }
@@ -61,6 +73,10 @@ export class AgentScanningPage implements OnInit {
 
   ionViewDidEnter(){
   	//this.showMap();
+  }
+
+  updateDisplayPicLoaded(){
+    this.agent.dp_loaded = true;
   }
 
   back(){
@@ -115,6 +131,32 @@ export class AgentScanningPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  gotoResults(){
+    this.router.navigate(['/results', {'search_id': this.search.id}])
+  }
+
+  async presentAgentSearchToast(header,iconname,icontext,msg,position,duration) {
+    const toast = await this.toast_controller.create({
+      header: header,
+      message: msg,
+      duration: duration,
+      color:"thapsblue",
+      position: position,
+      buttons: [
+        {
+          text: 'Browse Results On Your Own',
+          icon: "chevron-forward-outline",
+          cssClass: "toast-button",
+          role: 'cancel',
+          handler: () => {
+            this.gotoResults();
+          }
+        }
+      ]
+    });
+    toast.present();
   }
 
 

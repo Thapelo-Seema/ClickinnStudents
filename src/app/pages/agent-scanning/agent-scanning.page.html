@@ -1,3 +1,40 @@
+<ion-header>
+	<ion-item lines="none" *ngIf="agent">
+		<ion-avatar slot="start">
+			  <img src="{{agent?.photoURL}}" (load)="updateDisplayPicLoaded()" [hidden]="!agent?.dp_loaded">
+			<img src="https://ionic-docs-demo.herokuapp.com/assets/avatar.svg" [hidden]="agent?.dp_loaded">
+		</ion-avatar>
+		<ion-label>
+			<p>
+			Your Agent is:
+			</p>
+		  <h2>
+			{{ agent.firstname }} 
+		  </h2>
+		  <p class="ion-text-wrap">
+			Waiting for {{ agent.firstname }}  to accept the job
+		  </p>
+		</ion-label>
+	  </ion-item>
+	  <div *ngIf="!agent">
+		<ion-item lines="none">
+			<ion-avatar slot="start">
+				<ion-icon name="shield-checkmark-outline" style="font-size: 2em;" color="thapslightblue"></ion-icon>
+			</ion-avatar>
+			<ion-label>
+			  <p class="ion-text-wrap ion-text-center">
+				We are looking for the next available Agent...
+			  </p>
+			</ion-label>
+		  </ion-item>
+		<ion-button expand="block" class="ion-margin ion-text-wrap" color="thapsblue" mode="ios">
+			Browse Accommodations By Yourself Rather
+			<ion-icon slot="end" color="light" name="chevron-forward-outline"></ion-icon>
+		</ion-button>
+	  </div>
+	  
+</ion-header>
+
 <ion-content>
   <div class="gmap" #map id="map">
   </div>
@@ -9,11 +46,73 @@
     		<div></div>
   		</div>
   		<div class="dot pos1"></div>
+
   		<div class="dot pos2"></div>
+		
   		<div class="dot pos3"></div>
+		
   		<div class="dot pos4"></div>
+		
   		<div class="dot pos5"></div>
+		
   		<div class="dot pos6"></div>
+		
+		<!-- <div class="dot pos7"></div> -->
+
+		<div class="dot pos8"></div>
+
+		<div class="dot pos9"></div>
+		
+		<div class="dot pos10"></div>
+		
+		<!-- <div class="dot pos11"></div>
+
+		<div class="dot pos12"></div>
+
+		<div class="dot pos13"></div>
+
+		<div class="dot pos14"></div>
+
+		<div class="dot pos15"></div>
+
+		<div class="dot pos16"></div>
+
+		<div class="dot pos17"></div>
+
+		<div class="dot pos18"></div>
+
+		<div class="dot pos19"></div>
+
+		<div class="dot pos20"></div>
+
+		<div class="dot pos21"></div>
+
+		<div class="dot pos22"></div>
+
+		<div class="dot pos23"></div>
+
+		<div class="dot pos24"></div>
+
+		<div class="dot pos25"></div>
+
+		<div class="dot pos26"></div>
+
+		<div class="dot pos27"></div>
+
+		<div class="dot pos28"></div>
+
+		<div class="dot pos29"></div>
+
+		<div class="dot pos30"></div>
+
+		<div class="dot pos31"></div>
+
+		<div class="dot pos32"></div>
+
+		<div class="dot pos33"></div> -->
+		  
 	</div>
+	
 </ion-content>
+
 

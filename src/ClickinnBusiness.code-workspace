@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../clickinn-agents"
+		},
+		{
+			"path": "../../ionic5fullapp_final_2.0"
+		},
+		{
+			"path": "../../myapi"
+		}
+	],
+	"settings": {}
+}

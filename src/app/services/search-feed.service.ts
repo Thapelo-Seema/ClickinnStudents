@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { RoomSearch } from '../models/room-search.model';
 import { LocationGraphService } from './location-graph.service';
+import { User } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -172,10 +173,10 @@ export class SearchFeedService {
     return this.http.post(url, search, {headers});*/
   }
 
-  getAgentsForJob(search: RoomSearch){
-      this.afs.collection('Agents', ref =>
-      ref.where("online", "==", true)
-      .where("neighbourhoods", "array-contains", search.institution_address.neighbourhood)
-      )
+  getAgentsForSearch(search: RoomSearch){
+    return  this.afs.collection<User>('Agents', ref =>
+         ref.where("neighbourhoods", "array-contains", search.institution_address.neighbourhood)
+            .where("online", "==", true)
+      ).valueChanges()
   }
 }
