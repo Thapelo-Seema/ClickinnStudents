@@ -9,6 +9,7 @@ import { RoomSearch } from '../../models/room-search.model';
 import { RoomSearchService } from '../../object-init/room-search.service';
 import { MarkerOptions } from '../../models/marker-options.model';
 import { RoomService } from '../../services/room.service';
+import { Room } from 'src/app/models/room.model';
 
 declare var google: any;
 
@@ -23,6 +24,8 @@ export class ResultsScanningPage implements OnInit {
   map: any;
   search: RoomSearch;
   scanning_done: boolean = false;
+  rooms: Room[] = [];
+  area_snap: Room[] = [];
   constructor(
     public modalCtrl: ModalController,
     private alert_controller: AlertController, 
@@ -40,14 +43,20 @@ export class ResultsScanningPage implements OnInit {
       this.sf_svc.getSearch(this.actRoute.snapshot.paramMap.get("search_id"))
       .pipe(take(1))
       .subscribe(sch =>{
-        this.search = sch;
+        this.search = this.room_search_init_svc.copySearch(sch);
         this.showMap();
+        //Get all properties in the area
+        this.sf_svc.getAllRoomsInArea(sch)
+        .pipe(take(1))
+        .subscribe(rms =>{
+          this.area_snap = rms;
+        })
         //launch search
         this.sf_svc.getRoomSearchResults(this.search)
         .pipe(take(1))
         .subscribe(data =>{
           this.scanning_done = true;
-          this.presentAlertPrompt(data, this.search);
+          this.rooms = data;
         })
       })
     }

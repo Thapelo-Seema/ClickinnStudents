@@ -16,8 +16,8 @@ ion-item {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width:500px;
-      height:500px;
+      width:250px;
+      height:250px;
       background-size: 100% 100%;
       border-radius:250px;
       box-shadow:0 1px 1px 0 rgba(0,0,0,0.4), 0 0 4px 1px rgba(0,0,0,0.2), inset 0 1px 1px 0 rgba(255,255,255,0.2), inset 0 2px 4px 1px rgba(255,255,255,0.1);
@@ -28,8 +28,8 @@ ion-item {
       position: absolute;
       top: 0;
       left: 0;
-      width:500px;
-      height:500px;
+      width:250px;
+      height:250px;
       border-radius:250px;
       background:#dcf48a;
       -moz-animation: pulsating 2s ease-in-out;
@@ -44,9 +44,9 @@ ion-item {
       position: absolute;
       top: 0;
       left: 0;
-      width:500px;
-      height:500px;
-      border-radius:250px;
+      width:250px;
+      height:250px;
+      border-radius:150px;
       opacity:0.0;
       z-index:10;
     }
@@ -115,7 +115,7 @@ ion-item {
       position: absolute;
       top: 50%;
       left: 0;
-      width: 500px;
+      width: 250px;
       -webkit-animation: circling 2s linear;
       -webkit-animation-iteration-count: infinite;
       -moz-animation: circling 2s linear;
@@ -177,16 +177,16 @@ ion-item {
       -o-animation-fill-mode: both;
       -ms-animation-fill-mode: both;
       animation-fill-mode: both;
-      -webkit-animation-duration: 1s;
-      -moz-animation-duration: 1s;
-      -o-animation-duration: 1s;
-      -ms-animation-duration: 1s;
-      animation-duration: 1s;
-      -webkit-animation: blink 2s ease-out;
+      -webkit-animation-duration: 3s;
+      -moz-animation-duration: 3s;
+      -o-animation-duration: 3s;
+      -ms-animation-duration: 3s;
+      animation-duration: 3s;
+      -webkit-animation: blink 1.5s ease-out;
       -webkit-animation-iteration-count: infinite;
-      -moz-animation: blink 2s ease-out;
+      -moz-animation: blink 1.5s ease-out;
       -moz-animation-iteration-count: infinite;
-      animation: blink 2s ease-out;
+      animation: blink 1.5s ease-out;
       animation-iteration-count: infinite;
     }
     .pin:after {
@@ -198,11 +198,6 @@ ion-item {
       position: absolute;
       border-radius: 50%;
     }
-    
-    
-    
-    
-    
     
     
     @-moz-keyframes bounce {
@@ -360,9 +355,6 @@ ion-item {
     .dot.pos2 {
       left:40%;
       top:18%;
-      -webkit-animation-delay: 0.9s;
-      -moz-animation-delay: 0.9s;
-      animation-delay: 0.9s;
     }
 
    /*  .dot.pos7 {
@@ -392,9 +384,6 @@ ion-item {
     .dot.pos3 {
       left:50%;
       top:38%;
-      -webkit-animation-delay: 0.9s;
-      -moz-animation-delay: 0.9s;
-      animation-delay: 0.9s;
     }
 
     /* .dot.pos13 {
@@ -426,9 +415,6 @@ ion-item {
     .dot.pos4 {
       left:80%;
       top:28%;
-      -webkit-animation-delay: 0.9s;
-      -moz-animation-delay: 0.9s;
-      animation-delay: 0.9s;
     }
 
     /* .dot.pos16 {
@@ -460,9 +446,6 @@ ion-item {
     .dot.pos8 {
       left:70%;
       top:38%;
-      -webkit-animation-delay: 0.9s;
-      -moz-animation-delay: 0.9s;
-      animation-delay: 0.9s;
     }
 
     /* .dot.pos19 {
@@ -495,9 +478,6 @@ ion-item {
     .dot.pos9 {
       left:60%;
       top:28%;
-      -webkit-animation-delay: 0.9s;
-      -moz-animation-delay: 0.9s;
-      animation-delay: 0.9s;
     }
 
     /* .dot.pos22 {
@@ -530,9 +510,6 @@ ion-item {
     .dot.pos10 {
       left:70%;
       top:28%;
-      -webkit-animation-delay: 0.9s;
-      -moz-animation-delay: 0.9s;
-      animation-delay: 0.9s;
     }
 
     /* .dot.pos25 {
@@ -566,9 +543,6 @@ ion-item {
     .dot.pos5 {
       left:40%;
       top:82%;
-      -webkit-animation-delay: 0.9s;
-      -moz-animation-delay: 0.9s;
-      animation-delay: 0.9s;
     }
 
     /* .dot.pos28 {
@@ -602,9 +576,6 @@ ion-item {
     .dot.pos6 {
       left:20%;
       top:78%;
-      -webkit-animation-delay: 0.9s;
-      -moz-animation-delay: 0.9s;
-      animation-delay: 0.9s;
     }
 
     /* .dot.pos31 {

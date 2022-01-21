@@ -83,6 +83,18 @@ export class SearchFeedService {
     return search;
   }
 
+  getAllRoomsInArea(search: RoomSearch){
+    let locations = [];
+    //generate a list of surrounding areas
+    if(this.location_graph_svc.auckland_park_neighbourhoods.indexOf(search.institution_address.neighbourhood) != -1){
+      locations = this.location_graph_svc.auckland_park_neighbourhoods;
+    }else{
+      locations = this.location_graph_svc.auckland_park_neighbourhoods;
+    }
+    return this.afs.collection<Room>("Rooms", ref => ref.where("property.address.neighbourhood", "in", locations))
+    .valueChanges()
+  }
+
   /**
     Function for getting room search results from firebase cloud functions
     @params search which is a RoomSearch object to used for querying the search

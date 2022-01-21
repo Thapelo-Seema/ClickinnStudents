@@ -29,6 +29,7 @@ export class AccommodationSearchPage implements OnInit {
     private router: Router
     ) {
     this.search = this.searchfeed_svc.defaultSearch();
+    this.search.max_price = null;
     this.search.searcher = this.user_init_svc.defaultClient();
     this.uid = this.activated_route.snapshot.paramMap.get("uid");
   }

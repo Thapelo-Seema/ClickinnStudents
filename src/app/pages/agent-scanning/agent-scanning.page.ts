@@ -46,8 +46,10 @@ export class AgentScanningPage implements OnInit {
       this.sf_svc.getSearch(this.actRoute.snapshot.paramMap.get("search_id"))
       .pipe(take(1))
       .subscribe(sch =>{
-        this.search = sch;
-        this.showMap();
+        this.search = this.room_search_init_svc.copySearch(sch);
+        if(!this.map){
+          this.showMap();
+        }
         //launch search
         this.sf_svc.getAgentsForSearch(this.search)
         .subscribe(data =>{
