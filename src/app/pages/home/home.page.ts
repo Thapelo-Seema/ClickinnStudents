@@ -155,8 +155,6 @@ export class HomePage {
   }
 
   async openSpecialModal(id) {
-    console.log(id)
-    console.log("openModal");
     const modal = await this.modalController.create({
       component: BannerDetailsPage,
       componentProps: {

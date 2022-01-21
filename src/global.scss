@@ -127,11 +127,6 @@
         border-bottom-right-radius: 0px !important;
     }
 
-    .toast-button{
-        border-color: #dddddd;
-        border-radius: 4px;
-    }
-
 
 
 //*******************************//
@@ -1160,7 +1155,7 @@ ion-col.fix-col-icon {
     width: 94% !important;
     height: 200px !important;
     margin: 15px 2px 0px 5px !important;
-    //background-color: #dddddd;
+    background-color: #dddddd;
     border-radius: 8px  !important;
 
     }
@@ -1186,29 +1181,28 @@ ion-col.fix-col-icon {
         background-size: cover;
         background-position: center;
     }
-    .shop-banner-bg .card2-title {
-        width: 350px;
-        padding:0px 5px;
 
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis; // This is where the magic happens
 
-        font-style: roboto;
-        font-size: 25px;
-        font-weight: 300;
-
-        color: #FFFFFF;
-        background-color: rgba(0, 0, 0, 0.5);
-        position: absolute;
-        top:35%;
-        left:0x;
-        text-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-        text-align: center;
-        width: 100%;
-        height: 100%;
-        //text-align: center;
-    }
+.shop-banner-bg .card2-title {
+  width: 350px;
+  padding:0px 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: wrap; // This is where the magic happens
+  font-style: roboto;
+  font-size: 25px;
+  font-weight: 300;
+  color: #FFFFFF;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top:35%;
+  left:0x;
+  text-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  //text-align: center;
+}
 
     .shop-banner-bg .card2-star {
         width: 179px !important;
