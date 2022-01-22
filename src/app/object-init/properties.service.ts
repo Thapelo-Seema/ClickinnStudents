@@ -87,6 +87,7 @@ export class PropertiesService {
 		room_number: "",
 		sub_rooms: 0,
 		property: this.defaultProperty(),
+		time_modified: 0,
 		time_uploaded: 0
   	}
   	return room;
@@ -113,6 +114,7 @@ export class PropertiesService {
 		room_number: _room.room_number || "",
 		sub_rooms: _room.sub_rooms || 0,
 		property: _room.property || this.defaultProperty(),
+		time_modified: _room.time_modified || 0,
 		time_uploaded: _room.time_uploaded || 0
 	}
 	return room;

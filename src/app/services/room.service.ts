@@ -170,6 +170,20 @@ export class RoomService {
     .valueChanges();
   }
 
+  getRecentlyModified(){
+    return this.afs.collection<Room>('Rooms', ref =>
+    ref.orderBy('time_modified', 'desc')
+    .limit(15))
+    .valueChanges();
+  }
+
+  getRecentlyUpdated(){
+    return this.afs.collection<Room>('Rooms', ref =>
+    ref.orderBy('time_uploaded', 'desc')
+    .limit(15))
+    .valueChanges();
+  }
+
   getRecommendedProperties(){
     return this.afs.collection<Property>('Propertys')
     .valueChanges();

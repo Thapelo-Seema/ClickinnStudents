@@ -23,4 +23,5 @@ export interface Room{
 	sub_rooms: number;
 	property: Property;
 	time_uploaded?: number;
+	time_modified?: number;
 }

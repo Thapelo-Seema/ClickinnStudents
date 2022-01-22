@@ -104,10 +104,9 @@ export class HomePage {
         .subscribe(bns =>{
           this.banners = bns;
         })
-        this.room_svc.getRecommended()
+        this.room_svc.getRecentlyModified()
         .subscribe(rec =>{
           this.recommended = rec;
-          //console.log(this.recommended);
         })
 
       }else{
@@ -163,12 +162,12 @@ export class HomePage {
     return await modal.present();
   }
 
-  async openRoleModal(specialId) {
-    console.log("openModal");
+  async openRoleModal(_role) {
     const modal = await this.modalController.create({
       component: RolesPage,
       componentProps: {
-        specialId: specialId
+        role: _role,
+        uid: this.user.uid
       }
     });
     return await modal.present();

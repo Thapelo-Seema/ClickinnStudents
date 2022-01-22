@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ChatMessage } from '../models/chat-message.model';
 import { ChatThread } from '../models/chat-thread.model';
+import { Partnership } from '../models/partnership.model';
 
 @Injectable({
   providedIn: 'root'
@@ -77,4 +78,37 @@ export class ChatService {
     }
     return thread;
   }
+
+  defaultPartnership(){
+    let partnership: Partnership ={
+      firstname: "",
+      lastname: "",
+      email: "",
+      phone_number: "",
+      company: "",
+      role: "",
+      message: "",
+      id: "",
+      time: 0,
+      uid: ""
+    }
+    return partnership;
+  }
+
+  copyPartnership(_p_ship: Partnership){
+    let partnership: Partnership ={
+      firstname: _p_ship.firstname || "",
+      lastname: _p_ship.lastname || "",
+      email: _p_ship.email || "",
+      phone_number: _p_ship.phone_number || "",
+      company: _p_ship.company || "",
+      role: _p_ship.role || "",
+      message: _p_ship.message || "",
+      id: _p_ship.id || "",
+      time: _p_ship.time || 0,
+      uid: _p_ship.uid || ""
+    }
+    return partnership;
+  }
+
 }
