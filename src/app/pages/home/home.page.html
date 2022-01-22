@@ -45,10 +45,22 @@
   <ion-grid fixed class="ion-no-padding">
     <h5 class="ion-text-center main-header5 ion-margin-horizontal">Africa's online accommodation call-center</h5>
     <ion-grid fixed class="ion-no-padding ion-margin-bottom ion-padding-horizontal">
+      <ion-card *ngIf="present_search" tappable (click)="gotoSearch(search)"> 
+        <ion-item>
+          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+          <ion-label>
+            <h2>Current Active Search</h2>
+            <p class="ion-text-wrap">
+              {{search?.room_type}} around {{search?.institution_and_campus}} for {{search?.max_price | currency : 'R'}} and below</p>
+          </ion-label>
+        </ion-item>
+      </ion-card>
       <ion-button mode="ios" (click)="openSearchModal(user.uid)" expand="block" color="thapsblue" fill="outline">
         <ion-icon name="search-outline" slot="end" color="thapsblue"></ion-icon>
-        Get Started
+        <ion-text *ngIf="!present_search" >Get Started</ion-text>
+        <ion-text *ngIf="present_search">Make Another Search</ion-text>
       </ion-button>
+      
     </ion-grid>
       <!--*********** Banner  ***********-->
 

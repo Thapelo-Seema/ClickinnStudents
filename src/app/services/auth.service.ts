@@ -61,6 +61,8 @@ export class AuthService {
     return this.afAuth.signInAnonymously()
   }
 
+
+
   signOut(){
     return this.afAuth.signOut();
   }
