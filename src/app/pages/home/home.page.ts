@@ -35,7 +35,8 @@ export class HomePage {
 
   slideOption = {
     slidesPerView: 'auto',
-    grabCursor: true
+    grabCursor: true,
+    autoplay: true
   };
 
   //slider config for banner

@@ -22,4 +22,5 @@ export interface Room{
 	room_number: string;
 	sub_rooms: number;
 	property: Property;
+	time_uploaded?: number;
 }

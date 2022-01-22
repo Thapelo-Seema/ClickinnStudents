@@ -10,6 +10,8 @@ import { Room } from 'src/app/models/room.model';
 import { FileUpload } from 'src/app/models/file-upload.model';
 import { PropertiesService } from '../../object-init/properties.service';
 import { ImageGalleryViewPage } from '../image-gallery-view/image-gallery-view.page';
+import { Client } from 'src/app/models/client.model';
+import { UsersService } from '../../object-init/users.service';
 
 @Component({
   selector: 'app-room',
@@ -25,7 +27,7 @@ export class RoomPage implements OnInit {
 
   parentPath:any;
   uploader_pic_loaded: boolean = false;
-  agent_id: string = '';
+  client_id: string = '';
 
   //****** image slide  *******/
   sliderOpts = {
@@ -59,11 +61,13 @@ export class RoomPage implements OnInit {
   userId: any;
   room: Room;
   pictures: FileUpload[] = [];
+  client: Client;
 
   constructor(
       public userService: UserService,
       private activatedRoute: ActivatedRoute,
       private navController: NavController,
+      private user_init_svc: UsersService,
       public router: Router,
       private ionicComponentService: IonicComponentService,
       private modalController: ModalController,
@@ -71,6 +75,7 @@ export class RoomPage implements OnInit {
       private property_svc: PropertiesService
   ) { 
     this.room = this.property_svc.defaultRoom();
+    this.client = this.user_init_svc.defaultClient();
   }
 
   ngOnInit() {
@@ -89,8 +94,13 @@ export class RoomPage implements OnInit {
         console.log(this.pictures)
       })
     }
-    if(this.activatedRoute.snapshot.paramMap.get("agent_id")){
-      this.agent_id = this.activatedRoute.snapshot.paramMap.get("agent_id");
+    if(this.activatedRoute.snapshot.paramMap.get("client_id")){
+      this.client_id = this.activatedRoute.snapshot.paramMap.get("client_id");
+      this.userService.getClient(this.client_id)
+      .pipe(take(1))
+      .subscribe(clt =>{
+        this.client = this.user_init_svc.copyClient(clt);
+      })
     }
   }
 
@@ -119,7 +129,13 @@ export class RoomPage implements OnInit {
 
   gotoAppointment(){
     this.router.navigate(['/appointment', {'rooms': [this.room.room_id], 
-    'agent_id': this.room.property.uploader_id, 'client_id':  this.agent_id}]);
+    'agent_id': this.room.property.uploader_id, 'client_id':  this.client_id}]);
+  }
+
+  chat(){
+    
+    this.router.navigate(['/chat', {'rooms': [this.room.room_id], 
+    'agent_id': this.room.property.uploader_id, 'client_id':  this.client_id}]);
   }
 
   async getPlaceDetail(){

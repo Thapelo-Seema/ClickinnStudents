@@ -84,14 +84,19 @@ export class SearchFeedService {
   }
 
   getAllRoomsInArea(search: RoomSearch){
-    let locations = [];
+    let locations: string[] = [];
     //generate a list of surrounding areas
     if(this.location_graph_svc.auckland_park_neighbourhoods.indexOf(search.institution_address.neighbourhood) != -1){
       locations = this.location_graph_svc.auckland_park_neighbourhoods;
     }else{
       locations = this.location_graph_svc.auckland_park_neighbourhoods;
     }
-    return this.afs.collection<Room>("Rooms", ref => ref.where("property.address.neighbourhood", "in", locations))
+    for(let i = 0; i < locations.length - 1; i++){
+      locations[i] = locations[i].charAt(0).toUpperCase() + locations[i].slice(1);
+    }
+    console.log(locations)
+    return this.afs.collection<Room>("Rooms", ref => 
+    ref.where("property.address.neighbourhood", "in" , locations))
     .valueChanges()
   }
 
@@ -103,12 +108,15 @@ export class SearchFeedService {
     at the top
     */
     getRoomSearchResults(search: RoomSearch): Observable<any[]>{
-      let locations = [];
+      let locations: string[] = [];
         //generate a list of surrounding areas
         if(this.location_graph_svc.auckland_park_neighbourhoods.indexOf(search.institution_address.neighbourhood) != -1){
           locations = this.location_graph_svc.auckland_park_neighbourhoods;
         }else{
           locations = this.location_graph_svc.auckland_park_neighbourhoods;
+        }
+        for(let i = 0; i < locations.length - 1; i++){
+          locations[i] = locations[i].charAt(0).toUpperCase() + locations[i].slice(1);
         }
       if (search.parking_needed === true) {
       if (search.room_type === "any") {

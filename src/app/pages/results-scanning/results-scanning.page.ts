@@ -70,6 +70,14 @@ export class ResultsScanningPage implements OnInit {
   	window.history.back();
   }
 
+  gotoResults(){
+    this.router.navigate(['/results', {'search_id': this.search.id}])
+  }
+
+  gotoCallCenter(){
+    this.router.navigate(['/agent-scanning', {'search_id': this.search.id}])
+  }
+
   showMap(){
    	const location = new google.maps.LatLng(this.search.institution_address.lat, 
        this.search.institution_address.lng);

@@ -13,11 +13,11 @@
 				</p>
 			</ion-label>
 		</ion-item>
-		<ion-button *ngIf="rooms.length > 0" expand="block" class="ion-margin ion-text-wrap" color="thapsblue" mode="ios">
+		<ion-button *ngIf="rooms.length > 0" expand="block" class="ion-margin ion-text-wrap" color="thapsblue" mode="ios" (click)="gotoResults()" >
 			See results
 			<ion-icon slot="end" color="light" name="chevron-forward-outline"></ion-icon>
 		</ion-button>
-		<ion-button *ngIf="rooms.length == 0" expand="block" class="ion-margin ion-text-wrap" color="thapsblue" mode="ios">
+		<ion-button *ngIf="rooms.length == 0" expand="block" class="ion-margin ion-text-wrap" color="thapsblue" mode="ios" (click)="gotoCallCenter()" >
 			Speak To Agent For Assistance
 			<ion-icon slot="end" color="light" name="chevron-forward-outline"></ion-icon>
 		</ion-button>
@@ -34,7 +34,7 @@
 			  </p>
 			</ion-label>
 		  </ion-item>
-		<ion-button expand="block" class="ion-margin ion-text-wrap" color="thapsblue" mode="ios">
+		<ion-button expand="block" class="ion-margin ion-text-wrap" color="thapsblue" mode="ios" (click)="gotoCallCenter()">
 			Get Assistance From Agent
 			<ion-icon slot="end" color="light" name="chevron-forward-outline"></ion-icon>
 		</ion-button>
