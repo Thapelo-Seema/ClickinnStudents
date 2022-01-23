@@ -92,6 +92,7 @@ export class HomePage {
           //check if we have a client saved offline
           this.storage_svc.getUID()
           .then(data =>{
+            console.log(data)
             if(data){
               this.user.uid = data;
               this.fetchExistingClient();
@@ -115,32 +116,40 @@ export class HomePage {
   }
 
   fetchExistingClient(){
-    this.user_svc.getClient(this.user.uid)
-    .pipe(take(1))
-    .subscribe((u) =>{
-      if(u){
-        this.user = this.user_init_svc.copyClient(u);
-        this.saveUserOffline() //TO BE REMOVED: if no user record is present offline, save it
-        this.saveUserType(); //If no user type was saved, save it
-        this.ionic_component_svc.dismissLoading()
-        .catch(err => console.log(err))
-        if(this.user.current_job != ""){
-          this.searchfeed_svc.getSearch(this.user.current_job)
-          .pipe(take(1))
-          .subscribe(sch =>{
-            if(sch){
-              this.present_search = true;
-              this.search = this.searchfeed_svc.copySearch(sch)
-            }
-          })
+    console.log("fetching user...");
+    this.storage_svc.getUID()
+    .then(_uid =>{
+      if(_uid) this.user.uid = _uid;
+      this.user_svc.getClient(this.user.uid)
+      .pipe(take(1))
+      .subscribe((u) =>{
+        if(u){
+          console.log(u)
+          this.user = this.user_init_svc.copyClient(u);
+          this.saveUserOffline() //TO BE REMOVED: if no user record is present offline, save it
+          this.saveUserType(); //If no user type was saved, save it
+          this.ionic_component_svc.dismissLoading()
+          .catch(err => console.log(err))
+          if(this.user.current_job != ""){
+            this.searchfeed_svc.getSearch(this.user.current_job)
+            .pipe(take(1))
+            .subscribe(sch =>{
+              if(sch){
+                this.present_search = true;
+                this.search = this.searchfeed_svc.copySearch(sch)
+              }
+            })
+          }
+        }else{
+          console.log("creating user...")
+          this.user.user_type = "client";
+          this.user_svc.createClient(this.user);
+          this.ionic_component_svc.dismissLoading()
+          .catch(err => console.log(err))
         }
-      }else{
-        this.user.user_type = "client";
-        this.user_svc.createClient(this.user);
-        this.ionic_component_svc.dismissLoading()
-        .catch(err => console.log(err))
-      }
+      })
     })
+    .catch(err => console.log(err))
   }
 
   saveUserOffline(){
