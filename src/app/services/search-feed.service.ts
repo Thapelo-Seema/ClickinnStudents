@@ -197,6 +197,7 @@ export class SearchFeedService {
     return  this.afs.collection<User>('Agents', ref =>
          ref.where("neighbourhoods", "array-contains", search.institution_address.neighbourhood)
             .where("online", "==", true)
+            .where("busy_with_job", "==", false)
       ).valueChanges()
   }
 }

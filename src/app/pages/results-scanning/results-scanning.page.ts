@@ -71,7 +71,7 @@ export class ResultsScanningPage implements OnInit {
   }
 
   gotoResults(){
-    this.router.navigate(['/results', {'search_id': this.search.id}])
+    this.router.navigate(['/results', {'search_id': this.search.id, 'client_id': this.search.searcher.uid}])
   }
 
   gotoCallCenter(){

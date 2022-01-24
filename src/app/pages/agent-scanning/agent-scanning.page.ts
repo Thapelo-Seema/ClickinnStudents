@@ -25,6 +25,7 @@ export class AgentScanningPage implements OnInit {
   map: any;
   search: RoomSearch;
   agent: User = null;
+  exclude_these_agents: string[] = [];
   scanning_done: boolean = false;
   constructor(
     public modalCtrl: ModalController,
@@ -43,41 +44,60 @@ export class AgentScanningPage implements OnInit {
 
   ngOnInit() {
     if(this.actRoute.snapshot.paramMap.get("search_id")){
-      this.sf_svc.getSearch(this.actRoute.snapshot.paramMap.get("search_id"))
-      .pipe(take(1))
+      let search_sub = this.sf_svc.getSearch(this.actRoute.snapshot.paramMap.get("search_id"))
       .subscribe(sch =>{
+        //Initialise search and show map
         this.search = this.room_search_init_svc.copySearch(sch);
         if(!this.map){
           this.showMap();
         }
-        //launch search
-        this.sf_svc.getAgentsForSearch(this.search)
-        .subscribe(data =>{
-          this.scanning_done = true;
-          if(data){
-            this.toast_controller.dismiss()
-            .catch(err =>{
-              console.log(err);
-            })
-            this.agent = data.pop();
-            if(this.agent.current_job == ""){
-              //alert agent of job
-              this.agent.current_job = this.search.id;
-            
-              this.user_svc.updateUser(this.agent);
-            }else if(this.agent.contacts.indexOf(this.search.searcher.uid) != -1){
-              let index = this.agent.contacts.indexOf(this.search.searcher.uid);
-              let thread_id = this.agent.thread_ids[index];
-              this.router.navigate(['/chat', {'thread_id': thread_id}])
-            }
-          }
-        })
+        //Check if this search has been accepted by and agent, if not, 
+        //search for an agent to assign it to, else go to chat
+        //with the agent responsible
+        if(this.search.agent){
+          console.log("The search has been accepted");
+          search_sub.unsubscribe()
+          this.router.navigate(['/chat', {'search_id': this.search.id}])
+        }else{
+          //launch search for agent to assign
+          console.log("No agent assigned yet");
+          this.searchForNextAvailableAgent()
+        } 
       })
     }
   }
 
   ionViewDidEnter(){
   	//this.showMap();
+  }
+
+  searchForNextAvailableAgent(){
+    let agent_subs = this.sf_svc.getAgentsForSearch(this.search)
+    .subscribe(data =>{
+      this.scanning_done = true;
+      if(data && data.length > 0){
+        //Filter agents array and remove those agents that have been tried before
+        let _agents = data.filter(agt => this.exclude_these_agents.indexOf(agt.uid) == -1)
+        //push job to the agent at the top of the stack and wait for 
+        this.agent = _agents.pop();
+        //Update the array of agents to be excluded
+        this.exclude_these_agents.push(this.agent.uid)
+        //
+        if(this.agent.current_job == ""){
+          //alert agent of job
+          this.agent.current_job = this.search.id;
+          this.user_svc.updateUser(this.agent);
+        }else if(this.agent.current_job == this.search.id && this.agent.contacts.indexOf(this.search.searcher.uid) != -1){
+          let index = this.agent.contacts.indexOf(this.search.searcher.uid);
+          let thread_id = this.agent.thread_ids[index];
+          agent_subs.unsubscribe();
+          this.router.navigate(['/chat', {'search_id': this.search.id}])
+        }else{
+          //take the next agent in the stack
+          console.log("Got the wrong agent");
+        }
+      }
+    })
   }
 
   updateDisplayPicLoaded(){
@@ -139,7 +159,7 @@ export class AgentScanningPage implements OnInit {
   }
 
   gotoResults(){
-    this.router.navigate(['/results', {'search_id': this.search.id}])
+    this.router.navigate(['/results-scanning', {'search_id': this.search.id, 'client_id': this.search.searcher.uid}])
   }
 
   async presentAgentSearchToast(header,iconname,icontext,msg,position,duration) {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute , Router} from '@angular/router';
-import { ModalController,NavController} from '@ionic/angular';
+import { ModalController} from '@ionic/angular';
 import { UserService } from '../../services/user.service';
 import { IonicComponentService} from '../../services/ionic-component.service';
 import { Observable } from 'rxjs';
@@ -66,7 +66,6 @@ export class RoomPage implements OnInit {
   constructor(
       public userService: UserService,
       private activatedRoute: ActivatedRoute,
-      private navController: NavController,
       private user_init_svc: UsersService,
       public router: Router,
       private ionicComponentService: IonicComponentService,
@@ -134,7 +133,7 @@ export class RoomPage implements OnInit {
 
   chat(){
     
-    this.router.navigate(['/chat', {'rooms': [this.room.room_id], 
+    this.router.navigate(['/chat', {'rooms': [this.room.room_id], 'source': 'room',
     'agent_id': this.room.property.uploader_id, 'client_id':  this.client_id}]);
   }
 

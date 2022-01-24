@@ -43,13 +43,17 @@
   <!-- ##  -To edit breakpoint go to variables.css and edit --ion-grid-width- : value  ###-->
   <!-- ####################################################################################################### -->
   <ion-grid fixed class="ion-no-padding">
-    <h5 class="ion-text-center main-header5 ion-margin-horizontal">Africa's online accommodation call-center</h5>
+    <h5 class="ion-text-center main-header2 ion-margin-horizontal">Africa's online accommodation call-center</h5>
     <ion-grid fixed class="ion-no-padding ion-margin-bottom ion-padding-horizontal">
       <ion-card *ngIf="present_search" tappable (click)="gotoSearch(search)"> 
-        <ion-item>
+        <ion-item color="light">
           <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           <ion-label>
-            <h2>Current Active Search</h2>
+            <h2 class="main-header7 ion-text-center ion-text-wrap">
+              <ion-text color="thapsblue" style="font-weight: bold;">
+                Current Active Search
+              </ion-text>
+            </h2>
             <p class="ion-text-wrap">
               {{search?.room_type}} around {{search?.institution_and_campus}} for {{search?.max_price | currency : 'R'}} and below</p>
           </ion-label>

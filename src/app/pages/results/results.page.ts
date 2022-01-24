@@ -26,6 +26,7 @@ export class ResultsPage implements OnInit {
     }
 
   ngOnInit(){
+
     if(this.activated_route.snapshot.paramMap.get('search_id')){
       this.search.id = this.activated_route.snapshot.paramMap.get('search_id');
       this.searchfeed_svc.getSearch(this.search.id)
@@ -44,7 +45,7 @@ export class ResultsPage implements OnInit {
   }
 
   gotoRoom(room: Room){
-    this.router.navigate(['/room', {'room_id': room.room_id}]);
+    this.router.navigate(['/room', {'room_id': room.room_id, 'client_id': this.search.searcher.uid}]);
   }
 
 }

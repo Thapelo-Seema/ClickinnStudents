@@ -94,6 +94,8 @@ export class AccommodationSearchPage implements OnInit {
       this.search.id = ref.id;
       this.searchfeed_svc.updateSearch(this.search)
       .then(() =>{
+        this.search.searcher.current_job = this.search.id;
+        this.user_svc.updateClient(this.search.searcher);
         this.ion_component_svc.dismissLoading();
         this.close();
         this.router.navigate(['/agent-scanning', {search_id: this.search.id}])
