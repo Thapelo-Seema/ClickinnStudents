@@ -1,4 +1,12 @@
 <ion-header>
+	<ion-toolbar>
+		<ion-buttons slot="start">
+			<ion-back-button defaultHref="home"></ion-back-button>
+			<ion-button (click)="goHome()">
+				<ion-icon slot="icon-only" name="home-outline"></ion-icon>
+			</ion-button>
+		</ion-buttons>
+	</ion-toolbar>
 	<ion-slides class="swiper-container ion-border-bottom" pager= false [options]="slideOption" #slidesOne>
 		<ion-slide tappable class="swiper-slide" *ngFor="let room of rooms; let i = index" (click)="selectRoom(i)">
 			<ion-grid>
@@ -42,7 +50,7 @@
 		<ion-row>
 			<ion-list style="background-color:transparent; width: 100%;">
 				<div style="margin: 0; padding: 0;" *ngFor="let msg of thread.chat_messages ; let i = index">
-					<div *ngIf="msg?.highlight?.message" class="ion-no-padding ion-no-margin">
+					<div *ngIf="msg?.rooms.length > 0" class="ion-no-padding ion-no-margin">
 						<ion-slides class="swiper-container" pager= false [options]="slideOption" #slidesOne>
 							<ion-slide tappable class="swiper-slide ion-no-padding ion-no-margin" *ngFor="let room of msg.rooms; let j = index" (click)="openRoom(room.room_id)">
 								<ion-grid>
@@ -50,7 +58,7 @@
 										<ion-col class="ion-no-padding ion-no-margin">
 											<div class="agent-icon">
 												<ion-avatar mode="ios">
-													<img class="room-img" src="{{room.display_pic_url}}" (load)="updateRoomPicLoaded(i)" [hidden]="!room.dp_loaded">
+													<img class="room-img" src="{{room.display_pic_url}}" (load)="updateMessageRoomPicLoaded(i, j)" [hidden]="!room.dp_loaded">
 													<img class="room-img" src="../../../assets/imgs/plain-gray-background.jpeg" [hidden]="room.dp_loaded">
 												</ion-avatar>
 											</div>
@@ -67,6 +75,7 @@
 							</ion-label>
 						</ion-item>
 						<ion-card-content padding-top style="background: #f5f1e3; width: 100%;">
+							<ion-checkbox mode="ios" (ionChange)="msgHighlight($event, i)"></ion-checkbox>
 							<p>{{msg?.message}}</p>
 							<p class="ion-no-padding ion-no-margin ion-text-right time-font">
 								{{timeAgo(msg?.time)}}

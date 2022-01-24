@@ -159,7 +159,7 @@ export class AgentScanningPage implements OnInit {
   }
 
   gotoResults(){
-    this.router.navigate(['/results-scanning', {'search_id': this.search.id, 'client_id': this.search.searcher.uid}])
+    this.router.navigate(['/results', {'search_id': this.search.id, 'client_id': this.search.searcher.uid}])
   }
 
   async presentAgentSearchToast(header,iconname,icontext,msg,position,duration) {

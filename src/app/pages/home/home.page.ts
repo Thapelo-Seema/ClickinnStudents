@@ -235,7 +235,7 @@ export class HomePage {
 
 
   openDetail(accommodationId) {
-    this.router.navigate(['/room', {'room_id': accommodationId, 'uid': this.user.uid}]);
+    this.router.navigate(['/room', {'room_id': accommodationId, 'client_id': this.user.uid}]);
   }
 
   gotoSignin(){
