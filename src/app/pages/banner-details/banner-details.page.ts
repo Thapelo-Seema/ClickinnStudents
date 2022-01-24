@@ -4,6 +4,7 @@ import { ModalController,NavController, ToastController} from '@ionic/angular';
 import { IonicComponentService} from '../../services/ionic-component.service';
 import { RoomService } from '../../services/room.service';
 import { BannerItem } from '../../models/banner-item.model';
+import { AccommodationSearchPage } from '../accommodation-search/accommodation-search.page';
 
 // import { ShoppingImageGalleryPage } from '../shopping-image-gallery/shopping-image-gallery.page'; // import shopping image gallery component page
 // import { ShoppingReviewAddPage } from '../shopping-review-add/shopping-review-add.page';
@@ -19,6 +20,7 @@ export class BannerDetailsPage implements OnInit {
   specialDetail: Observable<any>;
   itemArray: any=[]; 
   specialId: string = "";
+  uid: string = "";
   bannerDetail: Observable<BannerItem>;
   constructor(
       private activatedRoute: ActivatedRoute,
@@ -31,6 +33,7 @@ export class BannerDetailsPage implements OnInit {
   ) { 
     console.log(this.activatedRoute.snapshot.paramMap.get('specialId'))
     this.specialId = this.activatedRoute.snapshot.paramMap.get('specialId');
+    this.uid = this.activatedRoute.snapshot.paramMap.get('uid');
   }
 
   async ngOnInit() {
@@ -51,6 +54,20 @@ export class BannerDetailsPage implements OnInit {
 
   async close(){
     await this.modalController.dismiss();
+  }
+
+  //Open accommodation search modal
+  async openSearchModal() {
+    await this.modalController.dismiss().catch(err => console.log(err));
+    const modal = await this.modalController.create({
+      component: AccommodationSearchPage,
+      cssClass: "small-modal",
+      componentProps: {
+        uid: this.uid
+      },
+      showBackdrop: true
+    });
+    return await modal.present();
   }
 
 }

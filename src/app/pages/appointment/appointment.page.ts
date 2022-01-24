@@ -112,7 +112,7 @@ export class AppointmentPage implements OnInit {
       this.appointment.time_modified = Date.now();
     }
     this.appointment_changed = true;
-    //console.log(this.appointment);
+    console.log(this.appointment);
   }
 
   formatDate(value: string){
