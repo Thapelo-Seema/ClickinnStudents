@@ -1,9 +1,15 @@
 <ion-header mode="ios" class="ion-no-border">
-  <!-- <ion-toolbar color="thapsblue">
-    <ion-title>
-      <h1 class="main-header4">Clickinn</h1>
-    </ion-title>
-  </ion-toolbar> -->
+  <ion-toolbar color="thapsblue" *ngIf="user?.firstname != ''">
+    <ion-chip tappable (click)="gotoProfile()">
+      <ion-avatar>
+        <img src="{{user?.photoURL}}" (load)="updateDisplayPicLoaded()" [hidden]="!user?.dp_loaded">
+        <img src="https://ionic-docs-demo.herokuapp.com/assets/avatar.svg" [hidden]="user?.dp_loaded">
+      </ion-avatar>
+      <ion-label color="light">
+        {{user.firstname}}
+      </ion-label>
+    </ion-chip>
+  </ion-toolbar>
   <ion-toolbar color="thapsblue"> 
     <ion-row>
       <ion-col>
@@ -41,7 +47,7 @@
               </ion-text>
             </h2>
             <p class="ion-text-wrap">
-              {{search?.room_type}} around {{search?.institution_and_campus}} for {{search?.max_price | currency : 'R'}} and below</p>
+              {{search?.room_type}} | {{search?.max_price | currency : 'R'}} </p>
           </ion-label>
         </ion-item>
       </ion-card>
@@ -98,7 +104,7 @@
       </ion-list-header> -->
 
       <ion-item lines="none">
-        <h1 class="main-header5">Partner with us</h1>
+        <h1 class="main-header5">Do business with us</h1>
       </ion-item>
 
       <ion-slides class="swiper-container slide-left" pager= false [options]="slideOption" #slidesThree mode="ios">

@@ -59,6 +59,8 @@ export class HomePage {
   present_search: boolean = false;
   user: Client;
   search: RoomSearch;
+  client_subs: any;
+  search_subs: any;
 
   constructor(
     public room_svc: RoomService,
@@ -83,73 +85,106 @@ export class HomePage {
     .pipe(take(1))
     .subscribe(usr =>{
       if(usr && usr.uid){
+        //This will run if we have an authenticated user
         this.getHomePageResources();
         this.user.uid = usr.uid;
         this.fetchExistingClient();
       }else{
-        this.authService.signUpAnonymously().then(dat =>{
-          this.getHomePageResources();
-          //check if we have a client saved offline
-          this.storage_svc.getUID()
-          .then(data =>{
-            console.log(data)
-            if(data){
-              this.user.uid = data;
-              this.fetchExistingClient();
-            }else{
-              this.user.uid = dat.user.uid;
-              this.user.user_type = "client";
-              this.user_svc.createClient(this.user);
-              this.saveUserOffline();
-              this.ionic_component_svc.dismissLoading()
-              .catch(err => console.log(err))
-            }
-          })
-        })
-        .catch(err =>{
-          this.ionic_component_svc.dismissLoading()
-          .catch(err => console.log(err))
-          console.log(err)
-        })
+        //This can run even if we have a cached user who is just not authenticated
+        this.signUpAnonymously();
       }
     })
   }
 
-  fetchExistingClient(){
-    console.log("fetching user...");
-    this.storage_svc.getUID()
-    .then(_uid =>{
-      if(_uid) this.user.uid = _uid;
-      this.user_svc.getClient(this.user.uid)
-      .pipe(take(1))
-      .subscribe((u) =>{
-        if(u){
-          console.log(u)
-          this.user = this.user_init_svc.copyClient(u);
-          this.saveUserOffline() //TO BE REMOVED: if no user record is present offline, save it
-          this.saveUserType(); //If no user type was saved, save it
-          this.ionic_component_svc.dismissLoading()
-          .catch(err => console.log(err))
-          if(this.user.current_job != ""){
-            this.searchfeed_svc.getSearch(this.user.current_job)
-            .pipe(take(1))
-            .subscribe(sch =>{
-              if(sch){
-                this.present_search = true;
-                this.search = this.searchfeed_svc.copySearch(sch)
-              }
-            })
-          }
+  //Authenticate on firebase but check also if there's a client saved offline and allow this client to use the authstate
+  signUpAnonymously(){
+    this.authService.signUpAnonymously().then(dat =>{
+      this.getHomePageResources();
+      //check if we have a client saved offline
+      this.storage_svc.getUID()
+      .then(data =>{
+        if(data){
+          this.user.uid = data;
+          this.fetchExistingClient();
         }else{
-          console.log("creating user...")
+          this.user.uid = dat.user.uid;
           this.user.user_type = "client";
           this.user_svc.createClient(this.user);
-          this.ionic_component_svc.dismissLoading()
-          .catch(err => console.log(err))
+          this.saveUserOffline();
+          this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
         }
       })
+      .catch(err => {
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+        console.log(err)
+      })
     })
-    .catch(err => console.log(err))
+    .catch(err =>{
+      this.ionic_component_svc.dismissLoading()
+      .catch(err => console.log(err))
+      console.log(err)
+    })
+  }
+
+  updateDisplayPicLoaded(){
+    this.user.dp_loaded = true;
+  }
+
+  gotoProfile(){
+    this.router.navigate(['/profile', {'client_id': this.user.uid}]);
+  }
+
+  fetchExistingClient(){
+    //console.log("fetching existing user...");
+    this.storage_svc.getUID()
+    .then(_uid =>{
+      //if there's a client already associated with device, authenticate that particular client instead of a new auth
+      if(_uid){
+        //console.log("got cached client...", _uid)
+        this.user.uid = _uid;
+        this.client_subs = this.user_svc.getClient(this.user.uid)
+        .subscribe((u) =>{
+          if(u){
+            //console.log("Got persisted client...", u)
+            this.user = this.user_init_svc.copyClient(u);
+            this.saveUserType(); //If no user type was saved, save it
+            if(this.user.current_job != ""){
+              this.searchfeed_svc.getSearch(this.user.current_job)
+              .pipe(take(1))
+              .subscribe(sch =>{
+                if(sch){
+                  this.present_search = true;
+                  this.search = this.searchfeed_svc.copySearch(sch)
+                  this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+                }else{
+                  this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+                }
+              })
+            }else{
+              this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+            }
+          }else{
+            this.user.user_type = "client";
+            //console.log("Cached client was not persited on db...persisting: ", this.user)
+            this.user_svc.createClient(this.user)
+            .then(val => {
+              this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+            })
+            .catch(err => {
+              this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+              console.log(err)
+            })
+          }
+        })
+      }else{
+        //console.log("No client cached, signing up anonymously")
+        this.signUpAnonymously();
+      }
+    })
+    .catch(err => {
+      this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+      console.log(err)
+    })
   }
 
   saveUserOffline(){
@@ -161,6 +196,8 @@ export class HomePage {
       console.log(err)
     })
   }
+
+  
 
   saveUserType(){
     this.storage_svc.getUserType()
@@ -186,7 +223,7 @@ export class HomePage {
     if( sch.agent && sch.agent.contacts.indexOf(this.user.uid) != -1){
       let index = sch.agent.contacts.indexOf(this.user.uid);
       let thread_id = sch.agent.thread_ids[index];
-      this.router.navigate(['/chat', {'thread_id': thread_id}])
+      this.router.navigate(['/chat', {'thread_id': thread_id, 'search_id': sch.id}])
     }else{
       this.router.navigate(['/agent-scanning', {'search_id': sch.id}])
     }

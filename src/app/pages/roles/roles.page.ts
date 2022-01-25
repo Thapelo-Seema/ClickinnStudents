@@ -16,7 +16,12 @@ export class RolesPage implements OnInit {
   partnership: Partnership;
   role: string = "";
   uid: string = "";
+  firstname: string = "";
+  lastname: string = "";
+  phone_number: string = "";
+  email: string = "";
   sent: boolean = false;
+  err_message: string = "";
   constructor(
     private activated_route: ActivatedRoute,
     private router: Router,
@@ -26,13 +31,21 @@ export class RolesPage implements OnInit {
     private ionic_component_svc: IonicComponentService
   ) { 
     this.partnership = this.chat_init_svc.defaultPartnership();
-    this.role= this.activated_route.snapshot.paramMap.get("role");
-    this.uid = this.activated_route.snapshot.paramMap.get("uid");
+    this.role= this.activated_route.snapshot.paramMap.get("role") || "";
+    this.uid = this.activated_route.snapshot.paramMap.get("uid") || "";
+    this.firstname = this.activated_route.snapshot.paramMap.get("firstname") || "";
+    this.lastname = this.activated_route.snapshot.paramMap.get("lastname");
+    this.email = this.activated_route.snapshot.paramMap.get("email") || "";
+    this.phone_number = this.activated_route.snapshot.paramMap.get("phone_number") || "";
   }
 
   ngOnInit() {
     this.partnership.role = this.role;
     this.partnership.uid = this.uid;
+    this.partnership.firstname = this.firstname;
+    this.partnership.lastname = this.lastname;
+    this.partnership.email = this.email;
+    this.partnership.phone_number = this.phone_number;
     console.log(this.partnership);
   }
 
@@ -41,17 +54,35 @@ export class RolesPage implements OnInit {
   }
 
   submit(){
-    this.partnership.time = Date.now();
-    this.ionic_component_svc.presentLoading();
-    this.chat_svc.createPartnership(this.partnership)
-    .then(ref =>{
-      this.partnership.id = ref.id;
-      this.chat_svc.updatePartnership(this.partnership)
-      .then(() =>{
-        this.sent = true;
-        this.ionic_component_svc.dismissLoading()
+    this.err_message = "";
+    if(this.partnership.firstname == "" || this.partnership.firstname.length < 2){
+      this.err_message = "Please enter a firstname with more than two characters";
+    }else if(this.partnership.lastname == "" || this.partnership.lastname.length < 3){
+      this.err_message = "Please enter a lastname with more than two characters";
+    }else if(this.partnership.email == ""){
+      this.err_message = "email left blank";
+    }else if(this.partnership.phone_number.length > 10 || this.partnership.phone_number.length < 10){
+      this.err_message = "Please enter a SA phone number";
+    }else{
+      this.partnership.time = Date.now();
+      this.ionic_component_svc.presentLoading();
+      this.chat_svc.createPartnership(this.partnership)
+      .then(ref =>{
+        this.partnership.id = ref.id;
+        this.chat_svc.updatePartnership(this.partnership)
+        .then(() =>{
+          this.sent = true;
+          this.ionic_component_svc.dismissLoading()
+          .catch(err =>{
+            console.log(err)
+          })
+        })
         .catch(err =>{
           console.log(err)
+          this.ionic_component_svc.dismissLoading()
+          .catch(err =>{
+            console.log(err)
+          })
         })
       })
       .catch(err =>{
@@ -61,14 +92,7 @@ export class RolesPage implements OnInit {
           console.log(err)
         })
       })
-    })
-    .catch(err =>{
-      console.log(err)
-      this.ionic_component_svc.dismissLoading()
-      .catch(err =>{
-        console.log(err)
-      })
-    })
+    }
   }
 
 }

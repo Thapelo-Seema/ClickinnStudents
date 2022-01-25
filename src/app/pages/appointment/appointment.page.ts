@@ -88,9 +88,9 @@ export class AppointmentPage implements OnInit {
       this.appointment_svc.getAppointment(this.activated_route.snapshot.paramMap.get('appointment_id'))
       .subscribe(appt =>{
         this.appointment = this.appointment_svc.copyAppointment(appt);
+        console.log(this.appointment);
       })
-    }
-    
+    }  
   }
 
   showDatePicker(){
@@ -149,7 +149,21 @@ export class AppointmentPage implements OnInit {
   }
 
   cancelAppointment(){
-
+    if(this.appointment.client_cancels == false && this.appointment.appointment_id != ""){
+      this.ionic_component_svc.presentLoading();
+      this.appointment.client_cancels = true;
+      this.appointment_svc.updateAppointment(this.appointment)
+      .then(() =>{
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
+        this.ionic_component_svc.presentAlert("Appointment successfully cancelled");
+      })
+      .catch(err =>{
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
+        this.ionic_component_svc.presentAlert("Could not cancel appointment");
+      })
+    }else{
+      this.ionic_component_svc.presentAlert("Could not cancel unconfirmed appointment");
+    }
   }
 
   confirmDatetime(){
