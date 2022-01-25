@@ -23,7 +23,7 @@ export class AppointmentService {
 
   getMyAppointments(uid: string){
     return this.afs.collection<Appointment>('Appointments', ref =>
-    ref.where('agent.uid', '==', uid)
+    ref.where('client.uid', '==', uid)
     .orderBy('time_modified', 'desc'))
     .valueChanges();
   }

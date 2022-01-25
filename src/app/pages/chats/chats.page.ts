@@ -3,6 +3,7 @@ import { ChatService } from '../../object-init/chat.service';
 import { ChattService } from '../../services/chatt.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChatThread } from 'src/app/models/chat-thread.model';
+import { format, parseISO, formatDistance } from 'date-fns';
 
 @Component({
   selector: 'app-chats',
@@ -20,8 +21,8 @@ export class ChatsPage implements OnInit {
     private router: Router) { }
 
   ngOnInit() {
-    if(this.activated_route.snapshot.paramMap.get("uid")){
-      this.uid = this.activated_route.snapshot.paramMap.get("uid");
+    if(this.activated_route.snapshot.paramMap.get("client_id")){
+      this.uid = this.activated_route.snapshot.paramMap.get("client_id");
       this.chat_svc.getUserThreads(this.uid)
       .subscribe(chts =>{
         console.log(chts);
@@ -31,11 +32,16 @@ export class ChatsPage implements OnInit {
   }
 
   updateDisplayPicLoaded(i){
-    this.chats[i].client.dp_loaded = true;
+    this.chats[i].agent.dp_loaded = true;
   }
 
   gotoThread(thread_id){
     this.router.navigate(['/chat', {'thread_id': thread_id, 'uid': this.uid}]);
   }
+
+  timeAgo(date){
+    return formatDistance(date, Date.now(), {addSuffix: true});
+  }
+
 
 }

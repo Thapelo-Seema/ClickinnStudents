@@ -1,40 +1,26 @@
 <ion-header mode="ios" class="ion-no-border">
-  <ion-toolbar color="thapsblue">
+  <!-- <ion-toolbar color="thapsblue">
     <ion-title>
       <h1 class="main-header4">Clickinn</h1>
     </ion-title>
-    <!-- <ion-buttons slot="start" >
-      <ion-menu-button auto-hide="false" color="thapsblue"></ion-menu-button>
-    </ion-buttons>
-    
-
-    <ion-buttons slot="end">
-      <ion-button class="badge-button" color="thapsblue">
-        Agents
-        <ion-icon name="cart-outline" color="warning">
-        </ion-icon>
-        <ion-badge class="badge-one" color="danger" *ngIf="cart.length > 0">{{ cart.length }}</ion-badge>
-      </ion-button>
-    </ion-buttons>
-
-    <ion-buttons slot="end">
-      <ion-button class="badge-button" (click)="gotoSignin()" color="thapsblue">
-        <ion-icon name="person-circle-outline" color="warning">
-        </ion-icon>
-        Landlords
-      </ion-button>
-    </ion-buttons>
-    <ion-buttons slot="end">
-      <ion-button class="badge-button" (click)="gotoSignin()" color="thapsblue">
-        <ion-icon name="person-circle-outline" color="warning">
-        </ion-icon>
-        Students
-      </ion-button>
-    </ion-buttons> -->
+  </ion-toolbar> -->
+  <ion-toolbar color="thapsblue"> 
+    <ion-row>
+      <ion-col>
+        <ion-tab-button (click)="gotoAppointments()">
+          <ion-icon color="light"  name="time-outline"></ion-icon>
+          <ion-label color="light" ><h3>Appointments</h3></ion-label>
+        </ion-tab-button>
+      </ion-col>
+      <ion-col>
+        <ion-tab-button (click)="gotoChats()">
+          <ion-icon color="light"  name="chatbubbles-outline"></ion-icon>
+          <ion-label color="light"><h3>Chats</h3></ion-label>
+        </ion-tab-button>
+      </ion-col>
+    </ion-row>
   </ion-toolbar>
 </ion-header>
-
-
 
 <ion-content no-padding>
 
@@ -43,7 +29,7 @@
   <!-- ##  -To edit breakpoint go to variables.css and edit --ion-grid-width- : value  ###-->
   <!-- ####################################################################################################### -->
   <ion-grid fixed class="ion-no-padding">
-    <h5 class="ion-text-center main-header2 ion-margin-horizontal">Africa's online accommodation call-center</h5>
+    <h5 class="ion-text-center main-header2 ion-margin-horizontal">Clickinn, Africa's Digital Accommodation Call-Center</h5>
     <ion-grid fixed class="ion-no-padding ion-margin-bottom ion-padding-horizontal">
       <ion-card *ngIf="present_search" tappable (click)="gotoSearch(search)"> 
         <ion-item color="light">

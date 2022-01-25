@@ -1,4 +1,5 @@
-import { Address } from "cluster";
+
+import { Address } from "./address.model";
 import { Client } from "./client.model";
 import { Room } from "./room.model";
 import { User } from "./user.model";

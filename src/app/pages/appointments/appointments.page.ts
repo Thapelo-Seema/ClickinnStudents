@@ -19,8 +19,8 @@ export class AppointmentsPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    if(this.activated_route.snapshot.paramMap.get('uid')){
-      this.appointment_svc.getMyAppointments(this.activated_route.snapshot.paramMap.get('uid'))
+    if(this.activated_route.snapshot.paramMap.get('client_id')){
+      this.appointment_svc.getMyAppointments(this.activated_route.snapshot.paramMap.get('client_id'))
       .subscribe(apts =>{
         this.appointments = apts;
       })
@@ -34,7 +34,11 @@ export class AppointmentsPage implements OnInit {
   }
 
   formatDate(value: string){
-    return format(parseISO(value), 'PPPPpppp');
+    return format(parseISO(value), 'PPPPp');
+  }
+
+  updateRoomPicLoaded(i){
+    this.appointments[i].rooms[0].dp_loaded = true;
   }
 
 }

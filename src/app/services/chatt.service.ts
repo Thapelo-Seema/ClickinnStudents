@@ -32,7 +32,7 @@ export class ChattService {
 
   getUserThreads(uid){
     return this.afs.collection<ChatThread>('ChatThreads', ref =>
-    ref.where("agent.uid", "==", uid)
+    ref.where("client.uid", "==", uid)
     .orderBy("last_update", "desc")).valueChanges();
   }
 

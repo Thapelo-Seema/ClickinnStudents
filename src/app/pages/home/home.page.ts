@@ -242,4 +242,12 @@ export class HomePage {
     this.router.navigateByUrl('/signin');
   }
 
+  gotoAppointments(){
+    this.router.navigate(['/appointments', {'client_id': this.user.uid}])
+  }
+
+  gotoChats(){
+    this.router.navigate(['/chats', {'client_id': this.user.uid}])
+  }
+
 }
