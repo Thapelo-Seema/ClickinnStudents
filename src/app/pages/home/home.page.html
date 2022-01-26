@@ -37,7 +37,7 @@
   <ion-grid fixed class="ion-no-padding">
     <h5 class="ion-text-center main-header2 ion-margin-horizontal">Clickinn, Africa's Digital Accommodation Call-Center</h5>
     <ion-grid fixed class="ion-no-padding ion-margin-bottom ion-padding-horizontal">
-      <ion-card *ngIf="present_search" tappable (click)="gotoSearch(search)"> 
+      <ion-card *ngIf="present_search && (search?.room_type != '') && (search?.max_price != 0)" tappable (click)="gotoSearch(search)"> 
         <ion-item color="light">
           <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
           <ion-label>

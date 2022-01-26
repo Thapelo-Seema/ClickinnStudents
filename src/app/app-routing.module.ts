@@ -72,6 +72,10 @@ const routes: Routes = [
     path: 'agent-scanning',
     loadChildren: () => import('./pages/agent-scanning/agent-scanning.module').then( m => m.AgentScanningPageModule)
   },
+  {
+    path: 'profile',
+    loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
+  },
 ];
 
 @NgModule({

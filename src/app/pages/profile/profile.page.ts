@@ -199,15 +199,15 @@ export class ProfilePage implements OnInit {
   }
 
   initializeViewForUpdate(){
-    if(this.activatedRoute.snapshot.paramMap.get("uid")){
+    if(this.activatedRoute.snapshot.paramMap.get("client_id")){
       this.showBackButton = true;
-      this.user.uid = this.activatedRoute.snapshot.paramMap.get("uid");
+      this.user.uid = this.activatedRoute.snapshot.paramMap.get("client_id");
       //get user profile
-      this.userService.getUser(this.user.uid)
+      this.userService.getClient(this.user.uid)
       .pipe(take(1))
       .subscribe(usr =>{
         console.log(usr);
-        this.user = this.userInitSvc.copyUser(usr);
+        this.user = this.userInitSvc.copyClient(usr);
         this.profilePicture.url = this.user.photoURL;
         console.log(this.user);
         if(usr.address){
@@ -263,7 +263,7 @@ export class ProfilePage implements OnInit {
    }
 
    async updateProfile(){
-    this.userService.updateUser(this.user)
+    this.userService.updateClient(this.user)
     .then(() =>{
       this.ionicComponentService.dismissLoading();
       this.ionicComponentService.presentAlert("User Updated");
