@@ -38,6 +38,7 @@ export class AppointmentPage implements OnInit {
   };
   show_datetime: boolean = false;
   appointment_changed: boolean = false;
+  loaded: boolean = false;
 
   constructor(
     private appointment_svc: AppointmentService,
@@ -49,48 +50,60 @@ export class AppointmentPage implements OnInit {
     private ionic_component_svc: IonicComponentService) { }
 
   ngOnInit(){
-
+    this.ionic_component_svc.presentLoading()
     if(!this.activated_route.snapshot.paramMap.get('appointment_id') ){
-
-      if(this.activated_route.snapshot.paramMap.get('agent_id') ){
-        this.user_svc.getUser(this.activated_route.snapshot.paramMap.get('agent_id'))
-        .pipe(take(1))
-        .subscribe(usr =>{
-          this.appointment.agent = this.user_init_svc.copyUser(usr);
-          console.log(this.appointment.agent)
-        })
+      this.getRooms()
+      this.getAgent()
+      this.getClient()
+      while(!this.appointment.agent|| !this.appointment.client || !this.appointment.location){
+        //keep loading
       }
-  
-      if(this.activated_route.snapshot.paramMap.get('client_id')){
-        this.user_svc.getClient(this.activated_route.snapshot.paramMap.get('client_id'))
-        .pipe(take(1))
-        .subscribe(usr =>{
-          this.appointment.client = this.user_init_svc.copyClient(usr);
-          console.log(this.appointment.client)
-        })
-      }
-  
-      if(this.activated_route.snapshot.paramMap.get('rooms')){
-        let room_ids = this.activated_route.snapshot.paramMap.get('rooms').split(',');
-        this.room_svc.getRoomsIn(room_ids)
-        .pipe(take(1))
-        .subscribe(rms =>{
-          this.appointment.rooms = rms;
-          this.appointment.rooms.forEach(rm =>{
-            this.appointment.landlord_confirmations.push(false);
-            this.appointment.landlord_declines.push(false);
-          })
-          this.appointment.location = this.appointment.rooms[0].property.address;
-        })
-      }
-
+      this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+      console.log(this.appointment)
     }else{
       this.appointment_svc.getAppointment(this.activated_route.snapshot.paramMap.get('appointment_id'))
       .subscribe(appt =>{
         this.appointment = this.appointment_svc.copyAppointment(appt);
-        console.log(this.appointment);
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+        console.log(this.appointment)
       })
     }  
+  }
+
+  getAgent(){
+    if(this.activated_route.snapshot.paramMap.get('agent_id') ){
+      this.user_svc.getUser(this.activated_route.snapshot.paramMap.get('agent_id'))
+      .pipe(take(1))
+      .subscribe(usr =>{
+        this.appointment.agent = this.user_init_svc.copyUser(usr);
+      })
+    }
+  }
+
+  getClient(){
+    if(this.activated_route.snapshot.paramMap.get('client_id')){
+      this.user_svc.getClient(this.activated_route.snapshot.paramMap.get('client_id'))
+      .pipe(take(1))
+      .subscribe(usr =>{
+        this.appointment.client = this.user_init_svc.copyClient(usr);
+      })
+    }
+  }
+
+  getRooms(){
+    if(this.activated_route.snapshot.paramMap.get('rooms')){
+      let room_ids = this.activated_route.snapshot.paramMap.get('rooms').split(',');
+      this.room_svc.getRoomsIn(room_ids)
+      .pipe(take(1))
+      .subscribe(rms =>{
+        this.appointment.rooms = rms;
+        this.appointment.rooms.forEach(rm =>{
+          this.appointment.landlord_confirmations.push(false);
+          this.appointment.landlord_declines.push(false);
+        })
+        this.appointment.location = this.appointment.rooms[0].property.address;
+      })
+    }
   }
 
   showDatePicker(){
@@ -117,6 +130,7 @@ export class AppointmentPage implements OnInit {
   }
 
   setAppointment(){
+    this.appointment.client_confirmed = true;
     this.ionic_component_svc.presentLoading();
     if(this.appointment.appointment_id != ""){
       this.syncAppointment()
@@ -152,6 +166,7 @@ export class AppointmentPage implements OnInit {
     if(this.appointment.client_cancels == false && this.appointment.appointment_id != ""){
       this.ionic_component_svc.presentLoading();
       this.appointment.client_cancels = true;
+      this.appointment.client_confirmed = false;
       this.appointment_svc.updateAppointment(this.appointment)
       .then(() =>{
         this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
@@ -163,6 +178,25 @@ export class AppointmentPage implements OnInit {
       })
     }else{
       this.ionic_component_svc.presentAlert("Could not cancel unconfirmed appointment");
+    }
+  }
+
+  confirmAppointment(){
+    if(this.appointment.client_confirmed == false && this.appointment.appointment_id != ""){
+      this.ionic_component_svc.presentLoading();
+      this.appointment.client_confirmed = true;
+      this.appointment.client_cancels = false;
+      this.appointment_svc.updateAppointment(this.appointment)
+      .then(() =>{
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
+        this.ionic_component_svc.presentAlert("Appointment successfully confirmed");
+      })
+      .catch(err =>{
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
+        this.ionic_component_svc.presentAlert("Could not confirm appointment");
+      })
+    }else{
+      this.ionic_component_svc.presentAlert("Could not confirm appointment");
     }
   }
 

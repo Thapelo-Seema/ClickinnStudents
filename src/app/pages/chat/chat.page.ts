@@ -15,6 +15,7 @@ import { RoomSearch } from 'src/app/models/room-search.model';
 import { take } from 'rxjs/operators';
 import { Client } from 'src/app/models/client.model';
 import { IonicComponentService } from '../../services/ionic-component.service';
+import { Appointment } from 'src/app/models/appointment.model';
 
 @Component({
   selector: 'app-chat',
@@ -137,13 +138,17 @@ export class ChatPage implements OnInit{
             this.generateInitialMessage();
             this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
           }
-
         })
-
       })
-
     }
+  }
 
+  gotoAppointment(appointment: Appointment){
+    this.router.navigate(['/appointment', {'appointment_id': appointment.appointment_id}])
+  }
+
+  formatDate(value: string){
+    return format(parseISO(value), 'PPPPp');
   }
 
   prepareSearchResults(search: RoomSearch){
@@ -173,21 +178,6 @@ export class ChatPage implements OnInit{
 
   }
 
-  confirm(){
-    this.datetime.confirm(true);
-  }
-
-  cancel(){
-    this.datetime.cancel(true);
-  }
-
-  updateAppointment(event){
-    this.formatDate(event.detail.value);
-  }
-
-  formatDate(value: string){
-    console.log(format(parseISO(value), 'MMM dd yyyy'));
-  }
 
   timeAgo(date){
     return formatDistance(date, Date.now(), {addSuffix: true});
@@ -199,7 +189,6 @@ export class ChatPage implements OnInit{
   }
 
   send(){
-    console.log("Sending message...");
     this.new_message.time = Date.now();
     this.new_message.message_id = this.thread.chat_messages.length > 0 ? this.thread.chat_messages.length - 1: 0;
     this.new_message.from = this.thread.client.uid;
@@ -209,13 +198,10 @@ export class ChatPage implements OnInit{
     this.thread.last_update = Date.now();
     //If thread is not empty, just update the thread else create a new thread on the database 
     if(this.thread.thread_id != ""){
-      console.log("Agent already has client as a contact");
       this.chat_svc.updateThread(this.thread);
     }else{
-      console.log("Agent does not have the client as a contact");
       this.chat_svc.createThread(this.thread)
       .then(td =>{
-        console.log("Just created new thread")
         this.thread.thread_id = td.id;
 
         //update contacts on agent
@@ -226,20 +212,14 @@ export class ChatPage implements OnInit{
         this.thread.client.contacts.push(this.thread.agent.uid);
         this.thread.client.thread_ids.push(this.thread.thread_id);
 
-        console.log("Just updated the agent and clients contact list locally: ", this.thread);
-
         //Update the thread
         this.chat_svc.updateThread(this.thread)
         .then(() =>{
-          console.log("Just synced the thread: ");
           //Sync agent and client profiles
           this.user_svc.updateClient(this.thread.client);
           this.user_svc.updateUser(this.thread.agent);
-          console.log("Just synced the agent and client profiles");
-          console.log("Subscribing to thread...");
           this.chat_svc.getThread(this.thread.thread_id)
           .subscribe(_thd =>{
-            console.log("Thread updated!");
             this.thread = this.chat_init_svc.copyThread(_thd);
           })
         })
@@ -254,12 +234,6 @@ export class ChatPage implements OnInit{
     this.new_message = this.chat_init_svc.defaultMessage();
     this.resetSelectedRooms();
     this.content.scrollToBottom(300);
-  }
-
-  setAppointment(){
-    this.router.navigate(['/appointment', {'agent_id': this.user.uid, 
-    'client_id': this.thread.client ? this.thread.client.uid : '', 
-    'rooms': this.generateSelectedRoomIds(), 'thread_id': this.thread.thread_id}])
   }
 
   updateRoomPicLoaded(i){
@@ -301,7 +275,6 @@ export class ChatPage implements OnInit{
       this.new_message.highlight = null;
     }
   }
-  
 
   openRoom(room_id){
     this.router.navigate(['/room', {'room_id': room_id}]);

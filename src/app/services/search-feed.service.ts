@@ -24,23 +24,8 @@ export class SearchFeedService {
     return this.afs.collection<RoomSearch>('SearchFeed').doc(search_id).valueChanges();
   }
 
-  getMySearchFeed(locations: string[]){
-    return this.afs.collection<RoomSearch>('SearchFeed', ref =>
-    ref.where('institution_address.neighbourhood', 'in', locations)
-    .orderBy('time', 'desc')
-    .limit(20)).valueChanges();
-  }
-
   updateSearch(search: RoomSearch){
     return this.afs.collection('SearchFeed').doc(search.id).update(search);
-  }
-
-  getNextFeedResults(locations: string[], sch: RoomSearch){
-    return this.afs.collection<RoomSearch>('SearchFeed', ref =>
-    ref.where('institution_address.neighbourhood', 'in', locations)
-    .orderBy('time', 'desc')
-    .startAfter(sch.time)
-    .limit(20)).valueChanges();
   }
 
   defaultSearch(){
@@ -94,7 +79,6 @@ export class SearchFeedService {
     for(let i = 0; i < locations.length - 1; i++){
       locations[i] = locations[i].charAt(0).toUpperCase() + locations[i].slice(1);
     }
-    console.log(locations)
     return this.afs.collection<Room>("Rooms", ref => 
     ref.where("property.address.neighbourhood", "in" , locations))
     .valueChanges()
@@ -109,39 +93,43 @@ export class SearchFeedService {
     */
     getRoomSearchResults(search: RoomSearch): Observable<any[]>{
       let locations: string[] = [];
-        //generate a list of surrounding areas
-        if(this.location_graph_svc.auckland_park_neighbourhoods.indexOf(search.institution_address.neighbourhood) != -1){
-          locations = this.location_graph_svc.auckland_park_neighbourhoods;
-        }else{
-          locations = this.location_graph_svc.auckland_park_neighbourhoods;
-        }
-        for(let i = 0; i < locations.length - 1; i++){
-          locations[i] = locations[i].charAt(0).toUpperCase() + locations[i].slice(1);
-        }
+      //generate a list of surrounding areas
+      if(this.location_graph_svc.auckland_park_neighbourhoods.indexOf(search.institution_address.neighbourhood) != -1){
+        locations = this.location_graph_svc.auckland_park_neighbourhoods;
+      }else{
+        locations = this.location_graph_svc.auckland_park_neighbourhoods;
+      }
+      //Capitalize the first character in the location name for easy comparison
+      for(let i = 0; i < locations.length - 1; i++){
+        locations[i] = locations[i].charAt(0).toUpperCase() + locations[i].slice(1);
+      }
+
       if (search.parking_needed === true) {
-      if (search.room_type === "any") {
-        if (search.funding_type === "nsfas") {
-          return this.afs.collection("Rooms", ref =>
-          ref.where("property.address.neighbourhood", "in", locations)
-          .where("property.parking", "==", true)
-          .where("accredited", "==", true)
-          .limit(30)).valueChanges();
-        } else {
-          return this.afs.collection("Rooms", ref =>
-          ref.where("property.address.neighbourhood", "in", locations)
-          .where("rent", "<=", search.max_price)
-          .where("property.parking", "==", true)
-          .orderBy("rent", "asc")
-          .limit(30)).valueChanges();
-        }
-      } else {
-        if (search.funding_type === "nsfas") {
-          return this.afs.collection("Rooms", ref =>
-          ref.where("property.address.neighbourhood", "in", locations)
-          .where("room_type", "==", search.room_type)
-          .where("property.parking", "==", true)
-          .where("accredited", "==", true)).valueChanges();
-        } else {
+        if (search.room_type === "Any Room Type") {
+          if (search.funding_type === "NSFAS funded") {
+            return this.afs.collection("Rooms", ref =>
+            ref.where("property.address.neighbourhood", "in", locations)
+            .where("property.parking", "==", true)
+            .where("accredited", "==", true)
+            .limit(30)).valueChanges();
+          } else {
+            return this.afs.collection("Rooms", ref =>
+            ref.where("property.address.neighbourhood", "in", locations)
+            .where("rent", "<=", search.max_price)
+            .where("property.parking", "==", true)
+            .orderBy("rent", "asc")
+            .limit(30)).valueChanges();
+          }
+        }else {
+          if (search.funding_type === "NSFAS funded") {
+            return this.afs.collection("Rooms", ref =>
+            ref.where("property.address.neighbourhood", "in", locations)
+            .where("room_type", "==", search.room_type)
+            .where("property.parking", "==", true)
+            .where("accredited", "==", true)
+            .limit(30))
+            .valueChanges();
+          } else {
           return this.afs.collection("Rooms", ref =>
           ref.where("property.address.neighbourhood", "in", locations)
           .where("rent", "<=", search.max_price)
@@ -151,11 +139,12 @@ export class SearchFeedService {
         }
       }
     } else {
-      if (search.room_type === "any") {
-        if (search.funding_type === "nsfas") {
+      if (search.room_type === "Any Room Type") {
+        if (search.funding_type === "NSFAS funded") {
           return this.afs.collection("Rooms", ref =>
           ref.where("property.address.neighbourhood", "in", locations)
-          .where("accredited", "==", true)).valueChanges();
+          .where("accredited", "==", true)
+          .limit(30)).valueChanges();
         } else {
           return this.afs.collection("Rooms", ref =>
           ref.where("property.address.neighbourhood", "in", locations)
@@ -163,14 +152,16 @@ export class SearchFeedService {
           .limit(30)).valueChanges();
         }
       } else {
-        if (search.funding_type === "nsfas") {
+        if (search.funding_type === "NSFAS funded") {
           return this.afs.collection("Rooms", ref =>
           ref.where("property.address.neighbourhood", "in", locations)
           .where("room_type", "==", search.room_type)
-          .where("accredited", "==", true)).valueChanges();
+          .where("accredited", "==", true)
+          .limit(30)).valueChanges();
         } else {
           return this.afs.collection("Rooms", ref =>
           ref.where("property.address.neighbourhood", "in", locations)
+          .where("room_type", "==", search.room_type)
           .where("rent", "<=", search.max_price).orderBy("rent", "asc")
           .limit(30)).valueChanges();
         }

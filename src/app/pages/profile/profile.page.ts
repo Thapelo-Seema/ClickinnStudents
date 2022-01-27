@@ -149,6 +149,7 @@ export class ProfilePage implements OnInit {
   The method also sets the display picture of the backroom
  */
   uploadProfilePic(start_p?: number){
+    this.ionicComponentService.presentLoading();
     const storageRef = this.afstorage.ref(`${this.profilePicture.path}/${this.profilePicture.name}`);
     let uploadTask = storageRef.put(this.profilePicture.file);
     uploadTask.percentageChanges().subscribe(data =>{
@@ -157,11 +158,14 @@ export class ProfilePage implements OnInit {
     uploadTask.snapshotChanges().subscribe(data =>{
     },
     err =>{
+      this.ionicComponentService.dismissLoading().catch(err => console.log(err))
+      this.ionicComponentService.presentAlert("Something went wrong with uploading your profile pic")
     },
     () =>{
       storageRef.getDownloadURL()
       .pipe(take(1))
       .subscribe(url =>{
+        this.ionicComponentService.dismissLoading().catch(err => console.log(err))
         this.profilePicture.url = url;
         this.user.photoURL = url;
         this.updateProfile();
@@ -170,6 +174,7 @@ export class ProfilePage implements OnInit {
   }
 
   uploadID(start_p?: number){
+    this.ionicComponentService.presentLoading();
     const storageRef = this.afstorage.ref(`${this.id_doc.path}/${this.id_doc.name}`);
     let uploadTask = storageRef.put(this.id_doc.file);
     uploadTask.percentageChanges().subscribe(data =>{
@@ -178,11 +183,14 @@ export class ProfilePage implements OnInit {
     uploadTask.snapshotChanges().subscribe(data =>{
     },
     err =>{
+      this.ionicComponentService.dismissLoading().catch(err => console.log(err))
+      this.ionicComponentService.presentAlert("Something went wrong with uploading your ID")
     },
     () =>{
       storageRef.getDownloadURL()
       .pipe(take(1))
       .subscribe(url =>{
+        this.ionicComponentService.dismissLoading().catch(err => console.log(err))
         this.id_doc.url = url;
         this.user.photoURL = url;
         this.updateProfile();
@@ -206,10 +214,8 @@ export class ProfilePage implements OnInit {
       this.userService.getClient(this.user.uid)
       .pipe(take(1))
       .subscribe(usr =>{
-        console.log(usr);
         this.user = this.userInitSvc.copyClient(usr);
         this.profilePicture.url = this.user.photoURL;
-        console.log(this.user);
         if(usr.address){
           if(usr.address.lng != 0 && usr.address.lat != 0){
             this.userAddress = usr.address.house_number + " " + usr.address.street + ", " + usr.address.neighbourhood;
@@ -227,9 +233,7 @@ export class ProfilePage implements OnInit {
         this.userService.getUser(this.userID)
         .pipe(take(1))
         .subscribe(usr =>{
-          console.log(usr);
           this.user = this.userInitSvc.copyUser(usr);
-          console.log(this.user);
           if(usr.address){
             if(usr.address.lng != 0 && usr.address.lat != 0){
               this.userAddress = usr.address.house_number + " " + usr.address.street + ", " + usr.address.neighbourhood;
@@ -244,13 +248,12 @@ export class ProfilePage implements OnInit {
       this.modalController.dismiss()
       .then()
       .catch(err =>{
-        this.router.navigate(['./agent-dash', {uid: this.user.uid}]);
+        this.router.navigate(['./home', {uid: this.user.uid}]);
       })
     }
   
 
   save(){
-    this.ionicComponentService.presentLoading();
     this.bindUserToForm();
     this.updateProfile();
   }
@@ -263,15 +266,16 @@ export class ProfilePage implements OnInit {
    }
 
    async updateProfile(){
+     this.ionicComponentService.presentLoading();
     this.userService.updateClient(this.user)
     .then(() =>{
-      this.ionicComponentService.dismissLoading();
-      this.ionicComponentService.presentAlert("User Updated");
+      this.ionicComponentService.dismissLoading().catch(err => console.log(err))
+      this.ionicComponentService.presentAlert("Profile Updated");
     })
     .catch(err =>{
-      this.ionicComponentService.dismissLoading();
-      this.ionicComponentService.presentAlert(err.message)
-      this.modalController.dismiss();
+      this.ionicComponentService.dismissLoading().catch(err => console.log(err))
+      this.ionicComponentService.presentAlert("Failed to update your profile, please try again");
+      this.modalController.dismiss().catch(err => console.log(err))
     })  
   }
 
@@ -285,38 +289,14 @@ export class ProfilePage implements OnInit {
     })
   }
 
-  getBusinessAreaPredictions(event){
-    this.mapsService.getPlacePredictionsSA(this.businessAddress)
-    .then(res =>{
-      this.businessAddressPredictions = res;
-    })
-    .catch(err =>{
-      this.ionicComponentService.presentAlert(err.message);
-    })
-  }
-
-  businessAddressSelected(address: any){
-    this.businessAddress = address.structured_formatting.main_text;
-    this.businessAddressPredictions = [];
-    this.mapsService.getSelectedPlace(address)
-    .then(adrs =>{
-      this.user.business_areas.push(adrs)
-      this.businessAddressPredictions = [];
-      this.businessAddress = "";
-    })
-    .catch(err =>{
-      this.ionicComponentService.presentAlert(err.message);
-    })
-  }
-
   addressSelected(address: any){
     this.userAddress = address.structured_formatting.main_text;
     this.addressPredictions = [];
     this.mapsService.getSelectedPlace(address)
     .then(adrs =>{
+      this.userAddress = adrs.house_number + " " + adrs.street + ", " + adrs.neighbourhood;
       this.user.address = adrs;
       this.addressPredictions = [];
-      console.log(this.user)
     })
     .catch(err =>{
       this.ionicComponentService.presentAlert(err.message);
