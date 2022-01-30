@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MenuController, ModalController} from '@ionic/angular';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
@@ -17,6 +17,7 @@ import { Client } from 'src/app/models/client.model';
 import { IonicStorageService } from '../../services/ionic-storage.service';
 import { RoomSearch } from 'src/app/models/room-search.model';
 import { Room } from 'src/app/models/room.model';
+import { AngularFireMessaging } from '@angular/fire/compat/messaging';
 
 @Component({
   selector: 'app-home',
@@ -65,6 +66,8 @@ export class HomePage {
 
   constructor(
     public room_svc: RoomService,
+    private activated_route: ActivatedRoute,
+    private af_messaging: AngularFireMessaging,
     public menuCtrl: MenuController,
     private user_svc: UserService,
     private user_init_svc: UsersService,
@@ -110,9 +113,19 @@ export class HomePage {
         }else{
           this.user.uid = dat.user.uid;
           this.user.user_type = "client";
-          this.user_svc.createClient(this.user);
+          this.user_svc.createClient(this.user)
+          .then(() =>{
+            this.updateUserFCM();
+            this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+            //if someone is coming from a link to see a room>>>> navigate to room
+            this.navigateToRoomFromLink()
+          })
+          .catch(err => {
+            console.log(err)
+            this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+          })
+          //We already have enough information to save client offline
           this.saveUserOffline();
-          this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
         }
       })
       .catch(err => {
@@ -125,6 +138,22 @@ export class HomePage {
       .catch(err => console.log(err))
       console.log(err)
     })
+  }
+
+  updateUserFCM(){
+    if(this.user.fcm_token == ""){
+      this.af_messaging.requestToken.pipe(take(1))
+      .subscribe(token =>{
+        if(token){
+          this.user.fcm_token = token;
+          console.log(token)
+          this.user_svc.updateClient(this.user);
+        }
+      },
+      err =>{
+        console.log(err);
+      })
+    }
   }
 
   updateDisplayPicLoaded(){
@@ -148,6 +177,7 @@ export class HomePage {
           if(u){
             //console.log("Got persisted client...", u)
             this.user = this.user_init_svc.copyClient(u);
+            this.updateUserFCM()
             this.saveUserType(); //If no user type was saved, save it
             if(this.user.current_job != ""){
               this.searchfeed_svc.getSearch(this.user.current_job)
@@ -156,20 +186,30 @@ export class HomePage {
                 if(sch){
                   this.present_search = true;
                   this.search = this.searchfeed_svc.copySearch(sch)
+                  //if()
                   this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+                  //if someone is coming from a link to see a room>>>> navigate to room
+                  this.navigateToRoomFromLink()
                 }else{
                   this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+                  //if someone is coming from a link to see a room>>>> navigate to room
+                  this.navigateToRoomFromLink()
                 }
               })
             }else{
               this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+              //if someone is coming from a link to see a room>>>> navigate to room
+              this.navigateToRoomFromLink()
             }
           }else{
             this.user.user_type = "client";
             //console.log("Cached client was not persited on db...persisting: ", this.user)
             this.user_svc.createClient(this.user)
             .then(val => {
+              this.updateUserFCM()
               this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+              //if someone is coming from a link to see a room>>>> navigate to room
+              this.navigateToRoomFromLink()
             })
             .catch(err => {
               this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
@@ -197,6 +237,13 @@ export class HomePage {
       console.log(err)
     })
   }
+
+navigateToRoomFromLink(){
+  if(this.activated_route.snapshot.paramMap.get('room_id')){
+    let room_id = this.activated_route.snapshot.paramMap.get('room_id');
+    this.router.navigate(['/room', {'room_id': room_id, 'client_id': this.user.uid}])
+  }
+}
 
   
 
