@@ -183,6 +183,10 @@ export class RoomPage implements OnInit {
 		}
 	}
 
+  updateRoomDisplayPicLoaded(){
+    this.room.dp_loaded = true;
+  }
+
   onScroll($event) {
     if ($event && $event.detail && $event.detail.scrollTop) {
       const scrollTop = $event.detail.scrollTop;

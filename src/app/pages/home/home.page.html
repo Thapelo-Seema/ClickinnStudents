@@ -75,10 +75,12 @@
       </ion-item>
 
       <ion-slides class="swiper-container" pager= false [options]="slideOption" #slidesTwo mode="ios">
-        <ion-slide tappable  *ngFor="let rec of recommended" (click)="openDetail(rec?.room_id)"> 
+        <ion-slide tappable  *ngFor="let rec of recommended; let i = index" (click)="openDetail(rec?.room_id)"> 
           <ion-card class="shop-main-h-card shop-card-tall   slide-right">
             <!-- <div *ngIf="recommended.discount" class="ribbon">SALE</div> -->
-            <div class="shop-div-tall-bg" [ngStyle]="{'background-image': 'url(' + rec.display_pic_url+ ')'}"> </div>
+            <div class="shop-div-tall-bg"> 
+              <img src="{{rec?.display_pic_url}}" height="100%" width="100%" (load)="updateRoomDisplayPicLoaded(i)" [hidden]="!rec.dp_loaded">
+            </div>
             <!--<div class="ion-margin-top">{{recommended.name}}</div>
                     <ion-icon  style="font-size: 14px !important;" color="warning" *ngFor="let i of [0,1,2,3,4]" [name]="i < recommended.rating  ? 'star' : 'star-outline'"></ion-icon>
                     <div class="main-b-header7" color="green">${{recommended.price}}</div> -->

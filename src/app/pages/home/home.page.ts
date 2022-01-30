@@ -16,6 +16,7 @@ import {take} from 'rxjs/operators';
 import { Client } from 'src/app/models/client.model';
 import { IonicStorageService } from '../../services/ionic-storage.service';
 import { RoomSearch } from 'src/app/models/room-search.model';
+import { Room } from 'src/app/models/room.model';
 
 @Component({
   selector: 'app-home',
@@ -31,7 +32,7 @@ export class HomePage {
     slidesPerView: 1,
     spaceBetween: 30,
     freeMode: true,
-    autoplay: true
+    //autoplay: true
   };
 
   slideOption = {
@@ -44,7 +45,7 @@ export class HomePage {
   bannerSlideOption = {
     slidesPerView: 'auto',
     grabCursor: true,
-    autoplay: true,
+    //autoplay: true,
   };
   
   // ******** for Cart ***********//
@@ -52,7 +53,7 @@ export class HomePage {
 
   //********* Observable *********/
   categories: Observable<any[]>; //the different roles on the platform 
-  recommended: any[] = [];  //recommended properties (reses/accommmodations/places)
+  recommended: Room[] = [];  //recommended properties (reses/accommmodations/places)
   banners: any[] = [];  //informational banners at the top
 
   //*******Own varibales */
@@ -247,6 +248,10 @@ export class HomePage {
       showBackdrop: true
     });
     return await modal.present();
+  }
+
+  updateRoomDisplayPicLoaded(i){
+    this.recommended[i].dp_loaded = true;
   }
 
   async openSpecialModal(id) {
