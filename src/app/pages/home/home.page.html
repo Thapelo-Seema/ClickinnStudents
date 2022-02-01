@@ -9,6 +9,14 @@
         {{user.firstname}}
       </ion-label>
     </ion-chip>
+    <ion-chip tappable (click)="gotoSearch(search)" *ngIf="search?.room_type != '' && search?.institution_and_campus != ''">
+      <ion-avatar>
+        <ion-icon name="search-outline"></ion-icon>
+      </ion-avatar>
+      <ion-label color="success">
+        Active Search
+      </ion-label>
+    </ion-chip>
   </ion-toolbar>
   <ion-toolbar color="thapsblue"> 
     <ion-row>
@@ -37,26 +45,11 @@
   <ion-grid fixed class="ion-no-padding">
     <h5 class="ion-text-center main-header2 ion-margin-horizontal">Clickinn, Africa's Digital Accommodation Call-Center</h5>
     <ion-grid fixed class="ion-no-padding ion-margin-bottom ion-padding-horizontal">
-      <ion-card *ngIf="present_search && (search?.room_type != '') && (search?.max_price != 0)" tappable (click)="gotoSearch(search)"> 
-        <ion-item color="light">
-          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
-          <ion-label>
-            <h2 class="main-header7 ion-text-wrap">
-              <ion-text color="thapsblue" style="font-weight: bold;">
-                Current Active Search
-              </ion-text>
-            </h2>
-            <p class="ion-text-wrap">
-              {{search?.room_type}} | {{search?.max_price | currency : 'R'}} </p>
-          </ion-label>
-        </ion-item>
-      </ion-card>
       <ion-button mode="ios" (click)="openSearchModal(user.uid)" expand="block" color="thapsblue" fill="outline">
         <ion-icon name="search-outline" slot="end" color="thapsblue"></ion-icon>
         <ion-text *ngIf="!present_search" >Get Started</ion-text>
         <ion-text *ngIf="present_search">Make Another Search</ion-text>
       </ion-button>
-      
     </ion-grid>
       <!--*********** Banner  ***********-->
 
@@ -95,7 +88,13 @@
         </ion-slide>
       </ion-slides>
 
-
+      <ion-grid fixed class="ion-no-padding ion-margin-bottom ion-padding-horizontal">
+        <ion-button mode="ios" (click)="openSearchModal(user.uid)" expand="block" color="thapsblue">
+          <ion-icon name="search-outline" slot="end" color="light"></ion-icon>
+          <ion-text *ngIf="!present_search" >Get Started</ion-text>
+          <ion-text *ngIf="present_search">Make Another Search</ion-text>
+        </ion-button>
+      </ion-grid>
       <!--*********** Category  ***********-->
       
 

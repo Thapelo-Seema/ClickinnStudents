@@ -141,19 +141,19 @@ export class HomePage {
   }
 
   updateUserFCM(){
-    if(this.user.fcm_token == ""){
-      this.af_messaging.requestToken.pipe(take(1))
-      .subscribe(token =>{
-        if(token){
+    this.af_messaging.requestToken.pipe(take(1))
+    .subscribe(token =>{
+      if(token){
+        if(this.user.fcm_token != token){
           this.user.fcm_token = token;
           console.log(token)
           this.user_svc.updateClient(this.user);
         }
-      },
-      err =>{
-        console.log(err);
-      })
-    }
+      }
+    },
+    err =>{
+      console.log(err);
+    })
   }
 
   updateDisplayPicLoaded(){

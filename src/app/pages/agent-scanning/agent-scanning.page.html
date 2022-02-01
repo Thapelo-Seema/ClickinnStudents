@@ -33,6 +33,10 @@
 		Browse Accommodations By Yourself
 		<ion-icon slot="end" color="light" name="chevron-forward-outline"></ion-icon>
 	</ion-button>
+	<ion-button *ngIf="agent" expand="block" fill="outline" class="ion-margin ion-text-wrap" color="thapsblue" mode="ios" (click)="getNextAgent()" >
+		Request Another Available Agent
+		<ion-icon slot="end" color="thapsblue" name="play-skip-forward-outline"></ion-icon>
+	</ion-button>
 </ion-header>
 
 <ion-content>

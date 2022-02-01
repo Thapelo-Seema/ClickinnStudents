@@ -13,6 +13,7 @@ export class RoomSearchService {
   defaultRoomSearch(){
   	let roomSearch: RoomSearch = {
 		agent: null,
+    agents_cancelled: [],
 		institution_and_campus: "",
 		institution_address: null,
 		room_type: "",
@@ -33,6 +34,7 @@ export class RoomSearchService {
   copySearch(_search: RoomSearch){
     let search: RoomSearch = {
       agent: _search.agent || null,
+      agents_cancelled: _search.agents_cancelled || [],
       institution_and_campus: _search.institution_and_campus || "",
       institution_address: _search.institution_address || null,
       room_type: _search.room_type || "",

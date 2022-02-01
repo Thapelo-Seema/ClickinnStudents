@@ -1,6 +1,6 @@
 import { ChatMessage } from "./chat-message.model";
 import { User } from "./user.model";
-
+//Chat thread
 export interface ChatThread{
     chat_messages: ChatMessage[];
     last_message: ChatMessage;

@@ -3,7 +3,7 @@ import { ModalController, AlertController, ToastController } from '@ionic/angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { MapsService } from '../../services/maps.service';
 import { SearchFeedService } from '../../services/search-feed.service';
-import { take } from 'rxjs/operators';
+import { take, map, filter } from 'rxjs/operators';
 import { RoomSearch } from '../../models/room-search.model';
 import { RoomSearchService } from '../../object-init/room-search.service';
 import { MarkerOptions } from '../../models/marker-options.model';
@@ -11,6 +11,7 @@ import { RoomService } from '../../services/room.service';
 import { IonicComponentService } from '../../services/ionic-component.service';
 import { User } from 'src/app/models/user.model';
 import { UserService } from '../../services/user.service';
+import { Subscription } from 'rxjs';
 
 declare var google: any;
 
@@ -27,6 +28,7 @@ export class AgentScanningPage implements OnInit {
   agent: User = null;
   exclude_these_agents: string[] = [];
   scanning_done: boolean = false;
+  search_subs: Subscription;
   constructor(
     public modalCtrl: ModalController,
     public toast_controller: ToastController,
@@ -43,61 +45,87 @@ export class AgentScanningPage implements OnInit {
   }
 
   ngOnInit() {
+    //this.initializePage();
+  }
+
+  ionViewWillEnter(){
+  	this.initializePage();
+  }
+
+  initializePage(){
     if(this.actRoute.snapshot.paramMap.get("search_id")){
-      let search_sub = this.sf_svc.getSearch(this.actRoute.snapshot.paramMap.get("search_id"))
-      .subscribe(sch =>{
-        //Initialise search and show map
-        this.search = this.room_search_init_svc.copySearch(sch);
-        if(!this.map){
-          this.showMap();
-        }
-        //Check if this search has been accepted by and agent, if not, 
-        //search for an agent to assign it to, else go to chat
-        //with the agent responsible
-        if(this.search.agent){
-          console.log("The search has been accepted");
-          search_sub.unsubscribe()
-          this.router.navigate(['/chat', {'search_id': this.search.id}])
-        }else{
-          //launch search for agent to assign
-          console.log("No agent assigned yet");
-          this.searchForNextAvailableAgent()
-        } 
-      })
+      if(!this.search_subs){
+        this.ionic_component_svc.presentLoading()
+        this.search_subs = this.sf_svc.getSearch(this.actRoute.snapshot.paramMap.get("search_id"))
+        .subscribe(sch =>{
+          //Initialise search and show map
+          this.search = this.room_search_init_svc.copySearch(sch);
+          if(!this.map){
+            this.showMap();
+          }
+          //Check if this search has been accepted by and agent, if not, 
+          //search for an agent to assign it to, else go to chat
+          //with the agent responsible
+          if(this.search.agent){
+            console.log("The search has been accepted");
+            //Once the agent has accepted the job and has sent the client a message, the client should be able to navigate 
+            //to the relevant thread
+            this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+            if(this.search.agent.uid != ""){
+              let index = this.search.agent.contacts.indexOf(this.search.searcher.uid)
+              if(index != -1) {
+                this.search_subs.unsubscribe();
+                this.router.navigate(['/chat', {'search_id': this.search.id}])
+              }
+            }
+          }else{
+            //launch search for agent to assign
+            console.log("No agent assigned yet");
+            this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+            this.searchForNextAvailableAgent()
+          } 
+        })
+      }
     }
   }
 
-  ionViewDidEnter(){
-  	//this.showMap();
-  }
-
   searchForNextAvailableAgent(){
+    this.ionic_component_svc.presentLoading();
     let agent_subs = this.sf_svc.getAgentsForSearch(this.search)
     .subscribe(data =>{
+      let filtered_agents = data.filter(agent => this.search.agents_cancelled.indexOf(agent.uid) == -1);
       this.scanning_done = true;
-      if(data && data.length > 0){
-        //Filter agents array and remove those agents that have been tried before
-        let _agents = data.filter(agt => this.exclude_these_agents.indexOf(agt.uid) == -1)
+      if(data && filtered_agents.length > 0){
         //push job to the agent at the top of the stack and wait for 
-        this.agent = _agents.pop();
-        //Update the array of agents to be excluded
-        this.exclude_these_agents.push(this.agent.uid)
-        //
-        if(this.agent.current_job == ""){
-          //alert agent of job
+        this.agent = filtered_agents.pop();
+        //alert agent of job
+        if(this.agent.current_job == "" || this.agent.current_job != this.search.id){
           this.agent.current_job = this.search.id;
           this.user_svc.updateUser(this.agent);
-        }else if(this.agent.current_job == this.search.id && this.agent.contacts.indexOf(this.search.searcher.uid) != -1){
-          let index = this.agent.contacts.indexOf(this.search.searcher.uid);
-          let thread_id = this.agent.thread_ids[index];
-          agent_subs.unsubscribe();
-          this.router.navigate(['/chat', {'search_id': this.search.id}])
-        }else{
-          //take the next agent in the stack
-          console.log("Got the wrong agent");
         }
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+      }else{
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
       }
     })
+  }
+
+  getNextAgent(){
+    if(this.agent.uid != "" && this.agent.current_job == this.search.id){
+      this.ionic_component_svc.presentLoading();
+      this.agent.current_job = "";
+      this.user_svc.updateUser(this.agent);
+      this.search.agents_cancelled.push(this.agent.uid)
+      this.agent = null;
+      this.sf_svc.updateSearch(this.search)
+      .then(() =>{
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+      })
+      .catch(err => console.log(err))
+      this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+    }else{
+      this.ionic_component_svc.presentAlert("You can't skip before an agent has been assisgned to you")
+    }
   }
 
   updateDisplayPicLoaded(){

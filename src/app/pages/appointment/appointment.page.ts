@@ -55,9 +55,6 @@ export class AppointmentPage implements OnInit {
       this.getRooms()
       this.getAgent()
       this.getClient()
-      while(!this.appointment.agent|| !this.appointment.client || !this.appointment.location){
-        //keep loading
-      }
       this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
       console.log(this.appointment)
     }else{
@@ -71,38 +68,46 @@ export class AppointmentPage implements OnInit {
   }
 
   getAgent(){
+    this.ionic_component_svc.presentLoading()
     if(this.activated_route.snapshot.paramMap.get('agent_id') ){
       this.user_svc.getUser(this.activated_route.snapshot.paramMap.get('agent_id'))
       .pipe(take(1))
       .subscribe(usr =>{
         this.appointment.agent = this.user_init_svc.copyUser(usr);
+        this.ionic_component_svc.dismissLoading();
       })
     }
   }
 
   getClient(){
+    this.ionic_component_svc.presentLoading()
     if(this.activated_route.snapshot.paramMap.get('client_id')){
       this.user_svc.getClient(this.activated_route.snapshot.paramMap.get('client_id'))
       .pipe(take(1))
       .subscribe(usr =>{
         this.appointment.client = this.user_init_svc.copyClient(usr);
+        this.ionic_component_svc.dismissLoading();
       })
     }
   }
 
   getRooms(){
+    this.ionic_component_svc.dismissLoading();
     if(this.activated_route.snapshot.paramMap.get('rooms')){
       let room_ids = this.activated_route.snapshot.paramMap.get('rooms').split(',');
       this.room_svc.getRoomsIn(room_ids)
       .pipe(take(1))
       .subscribe(rms =>{
         this.appointment.rooms = rms;
+        this.ionic_component_svc.dismissLoading();
         this.appointment.rooms.forEach(rm =>{
           this.appointment.landlord_confirmations.push(false);
           this.appointment.landlord_declines.push(false);
         })
         this.appointment.location = this.appointment.rooms[0].property.address;
       })
+    }else{
+      this.ionic_component_svc.dismissLoading();
     }
   }
 

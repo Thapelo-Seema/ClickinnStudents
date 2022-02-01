@@ -14,7 +14,14 @@
 </ion-header>
 
 <ion-content>
-
+  <div id="container" *ngIf="rooms.length == 0">
+    <ion-icon name="bulb-outline" class="empty-icon-circle icon-large empty-icon-color"></ion-icon>
+    <br>
+    <strong class="capitalize">
+      <ion-text color="lightgray">No Results</ion-text>
+    </strong>
+    <p>Don't stress! Our agents will be in touch to assist you shortly.</p>
+  </div>
 
   <ion-grid fixed class="ion-no-padding">
     <ion-card tappable mode="ios"  *ngFor="let room of rooms" (click)="gotoRoom(room)">
