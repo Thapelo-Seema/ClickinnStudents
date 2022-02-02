@@ -50,64 +50,84 @@ export class AppointmentPage implements OnInit {
     private ionic_component_svc: IonicComponentService) { }
 
   ngOnInit(){
-    this.ionic_component_svc.presentLoading()
-    if(!this.activated_route.snapshot.paramMap.get('appointment_id') ){
+    if(!this.activated_route.snapshot.paramMap.get('appointment_id')){
+      console.log("running appointment from room...")
       this.getRooms()
       this.getAgent()
-      this.getClient()
-      this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-      console.log(this.appointment)
-    }else{
+      //this.getClient()
+    }else if(this.activated_route.snapshot.paramMap.get('appointment_id')){
+      console.log("running appointment...")
+      this.ionic_component_svc.presentLoading();
       this.appointment_svc.getAppointment(this.activated_route.snapshot.paramMap.get('appointment_id'))
       .subscribe(appt =>{
         this.appointment = this.appointment_svc.copyAppointment(appt);
-        this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-        console.log(this.appointment)
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
+      },
+      err =>{
+        console.log(err);
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
       })
     }  
   }
 
   getAgent(){
-    this.ionic_component_svc.presentLoading()
     if(this.activated_route.snapshot.paramMap.get('agent_id') ){
+      this.ionic_component_svc.presentLoading();
+      //console.log("agent loading...")
       this.user_svc.getUser(this.activated_route.snapshot.paramMap.get('agent_id'))
       .pipe(take(1))
       .subscribe(usr =>{
         this.appointment.agent = this.user_init_svc.copyUser(usr);
-        this.ionic_component_svc.dismissLoading();
+        //this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
+        //console.log("agent loaded...")
+        this.getClient()
+      },
+      err =>{
+        console.log(err);
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
       })
     }
   }
 
   getClient(){
-    this.ionic_component_svc.presentLoading()
     if(this.activated_route.snapshot.paramMap.get('client_id')){
+      //this.ionic_component_svc.presentLoading();
+      //console.log("client loading...")
       this.user_svc.getClient(this.activated_route.snapshot.paramMap.get('client_id'))
       .pipe(take(1))
       .subscribe(usr =>{
         this.appointment.client = this.user_init_svc.copyClient(usr);
-        this.ionic_component_svc.dismissLoading();
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
+        //console.log("client loaded...")
+      },
+      err =>{
+        console.log(err);
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
       })
     }
   }
 
   getRooms(){
-    this.ionic_component_svc.dismissLoading();
     if(this.activated_route.snapshot.paramMap.get('rooms')){
+      //console.log("rooms loading...")
+      //this.ionic_component_svc.presentLoading();
       let room_ids = this.activated_route.snapshot.paramMap.get('rooms').split(',');
       this.room_svc.getRoomsIn(room_ids)
       .pipe(take(1))
       .subscribe(rms =>{
         this.appointment.rooms = rms;
-        this.ionic_component_svc.dismissLoading();
+        //this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
+        //console.log("rooms loaded...")
         this.appointment.rooms.forEach(rm =>{
           this.appointment.landlord_confirmations.push(false);
           this.appointment.landlord_declines.push(false);
         })
         this.appointment.location = this.appointment.rooms[0].property.address;
+      },
+      err =>{
+        console.log(err);
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
       })
-    }else{
-      this.ionic_component_svc.dismissLoading();
     }
   }
 
