@@ -50,9 +50,12 @@
               <ion-icon name="calendar-outline" slot="start"></ion-icon>
                 Make Appointment
           </ion-button>
-          <ion-button (click)="chat()" color="thapslightblue">
-              <ion-icon slot="icon-only" name="chatbubbles-outline" color="light"></ion-icon>
+          <ion-button color="thapslightblue" href="{{generateWhatsAppLink()}}">
+            <ion-icon slot="icon-only" name="chatbubbles-outline" color="light"></ion-icon>
           </ion-button>
+          <!-- <ion-button (click)="chat()" color="thapslightblue">
+              <ion-icon slot="icon-only" name="chatbubbles-outline" color="light"></ion-icon>
+          </ion-button> -->
         </div>
         <!--*********** Description ***********-->
         <div class="travel_space4">

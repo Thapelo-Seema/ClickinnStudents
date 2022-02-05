@@ -16,13 +16,15 @@ export class ResultsPage implements OnInit {
 
   rooms: Room[] = [];
   search: RoomSearch;
+  i = 0;
+  show_search: boolean = false;
   constructor(
     private ionic_component_svc: IonicComponentService,
     private activated_route: ActivatedRoute, 
     private router: Router, 
     private searchfeed_svc: SearchFeedService,
     private room_search_init_svc: RoomSearchService) { 
-      this.search = this.room_search_init_svc.defaultRoomSearch();
+      this.search  = this.searchfeed_svc.defaultSearch();
     }
 
   ngOnInit(){
@@ -46,6 +48,32 @@ export class ResultsPage implements OnInit {
 
   gotoRoom(room: Room){
     this.router.navigate(['/room', {'room_id': room.room_id, 'client_id': this.search.searcher.uid}]);
+  }
+
+  urlEncodedMessge(): string{
+    let msg: string = `Hi my name is ${this.search.searcher.firstname}, here is my search:.\n`;
+    msg += "https://clickinn.co.za/results;search_id=" + this.search.id + ";client_id=" + this.search.searcher.uid;
+    return encodeURI(msg);
+  }
+
+  //Send a follow up
+  generateWhatsAppLink(): string{
+    //this.submitAgentService();
+    let msg: string = this.urlEncodedMessge();
+    return `https://wa.me/+27671093186?text=${msg}`;
+  }
+
+  
+  seeSearch(){
+    this.i++
+    if(this.i > 10){
+      this.show_search = true;
+    }
+  }
+
+  close(){
+    this.i = 0;
+    this.show_search = false;
   }
 
 }

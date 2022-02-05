@@ -15,7 +15,10 @@ admin.initializeApp();
 /*  This function will push a notification to a client once their job has been assigned,
     once an agent has arrived onsite and it also notifies an artisan once they have been assigned to a job
 */
-exports.chatNotification = functions.firestore.document('ChatThreads/{thread_id}').onUpdate( async (change, context) =>{
+
+
+
+/* exports.chatNotification = functions.firestore.document('ChatThreads/{thread_id}').onUpdate( async (change, context) =>{
     let oldThread = change.before.data();
     let newThread = change.after.data();
     let db = admin.firestore();
@@ -26,10 +29,6 @@ exports.chatNotification = functions.firestore.document('ChatThreads/{thread_id}
     let token = "";
 
     if(newThread.last_message.from == newThread.client.uid && newThread.chat_messages.length > oldThread.chat_messages.length){
-        //an agent has just been assigned to a new job and must be notified 
-        /* @TODO: addfunctionality for user to be notified when their job request 
-            has been assigned  
-        */
         user = (await (await db.collection('Agents').doc(newThread.agent.uid).get()).data());
         type = "agent";
     }else if(newThread.last_message.from == newThread.agent.uid && newThread.chat_messages.length > oldThread.chat_messages.length){
@@ -87,6 +86,4 @@ exports.chatNotification = functions.firestore.document('ChatThreads/{thread_id}
     }else{
         return Promise.all("no tokens to remove");
     }
-    
-
-})
+}) */

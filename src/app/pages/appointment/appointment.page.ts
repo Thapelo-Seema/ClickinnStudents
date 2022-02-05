@@ -22,7 +22,7 @@ export class AppointmentPage implements OnInit {
     location: null,
     agent: null,
     appointment_id: "",
-    client: null,
+    client: this.user_init_svc.defaultClient(),
     client_cancels: false,
     date: null,
     landlord_confirmations: [],
@@ -128,6 +128,21 @@ export class AppointmentPage implements OnInit {
         console.log(err);
         this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
       })
+    }else if(this.activated_route.snapshot.paramMap.get('room_id')){
+      this.room_svc.getRoom(this.activated_route.snapshot.paramMap.get('room_id'))
+      .pipe(take(1))
+      .subscribe(room =>{
+        this.appointment.rooms.push(room)
+        this.appointment.rooms.forEach(rm =>{
+          this.appointment.landlord_confirmations.push(false);
+          this.appointment.landlord_declines.push(false);
+        })
+        this.appointment.location = this.appointment.rooms[0].property.address;
+      },
+      err =>{
+        console.log(err);
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
+      })
     }
   }
 
@@ -144,6 +159,7 @@ export class AppointmentPage implements OnInit {
   }
 
   datetimeChanged(event){
+    console.log(event.detail.value);
     this.appointment.date = event.detail.value;
     this.appointment.time_set = Date.now();
     this.appointment.time_modified = Date.now();
@@ -245,6 +261,53 @@ export class AppointmentPage implements OnInit {
       this.ionic_component_svc.presentAlert(err.message);
       console.log(err);
     })
+  }
+
+  urlEncodedMessge(): string{
+    let msg: string = `Hi my name is ${this.appointment.client.firstname}, I would like to book for a viewing for\n`;
+    msg += this.formatDate(this.appointment.date) + " for this room:\n";
+    if(this.appointment.rooms.length > 0)
+    msg += "https://clickinn.co.za/room;room_id=" + this.appointment.rooms[0].room_id + "\n";
+    return encodeURI(msg);
+  }
+
+  /* sendMail(search: Search){
+    let msg: string = `Hi my name is ${this.user.firstname}, I am responding to your search on Clickinn.\n`;
+    if(search.apartment_type == 'Any'){
+        msg += `I'd like to enquire if you're still looking for any room type 
+        around ${this.returnFirst(search.Address.description)}. If you are still looking please contact me on ${this.user.phoneNumber} or email me on ${this.user.email}`
+    }else{
+        msg += `I'd like to enquire if you're still looking for
+         a ${search.apartment_type} around ${this.returnFirst(search.Address.description)}`
+    }
+    this.searchfeed_svc.sendMail(search, this.user.firstname, msg)
+    .subscribe(res =>{
+      console.log(res)
+    }, err =>{
+      console.log(err);
+    })
+  } */
+
+  /* formatContactNumber(search: Search): string{
+    let newNumber = search.searcher_contact ? search.searcher_contact: "";
+    if(search.searcher_contact != undefined){
+      if(search.searcher_contact.substring(0, 1) == "0"){
+          newNumber = "+27" + search.searcher_contact.substring(1);
+        }else if(search.searcher_contact.substring(0, 1) == "+"){
+          newNumber = search.searcher_contact;
+        }
+        else if(search.searcher_contact.substring(0, 1) == "27"){
+          newNumber = "+" + search.searcher_contact;
+        }
+    }
+    return newNumber;
+  } */
+
+  //Send a follow up
+  generateWhatsAppLink(): string{
+    //Composing message
+    let msg: string = this.urlEncodedMessge();
+    return `https://wa.me/+27671093186?text=${msg}`;
   }
 
 }

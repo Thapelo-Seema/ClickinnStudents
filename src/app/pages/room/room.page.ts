@@ -12,6 +12,7 @@ import { PropertiesService } from '../../object-init/properties.service';
 import { ImageGalleryViewPage } from '../image-gallery-view/image-gallery-view.page';
 import { Client } from 'src/app/models/client.model';
 import { UsersService } from '../../object-init/users.service';
+import { RoomSearch } from 'src/app/models/room-search.model';
 
 @Component({
   selector: 'app-room',
@@ -217,5 +218,64 @@ export class RoomPage implements OnInit {
   openDetail(url,itemId){
     this.router.navigateByUrl('/'+url+'/'+itemId);
   }
+
+  urlEncodedMessge(): string{
+    let msg: string = `Hi my name is ${this.client.firstname}, I would like to enquire if this room is still available.\n`;
+    msg += "https://clickinn.co.za/room;room_id=" + this.room.room_id;
+    return encodeURI(msg);
+  }
+
+  /* sendMail(search: Search){
+    let msg: string = `Hi my name is ${this.user.firstname}, I am responding to your search on Clickinn.\n`;
+    if(search.apartment_type == 'Any'){
+        msg += `I'd like to enquire if you're still looking for any room type 
+        around ${this.returnFirst(search.Address.description)}. If you are still looking please contact me on ${this.user.phoneNumber} or email me on ${this.user.email}`
+    }else{
+        msg += `I'd like to enquire if you're still looking for
+         a ${search.apartment_type} around ${this.returnFirst(search.Address.description)}`
+    }
+    this.searchfeed_svc.sendMail(search, this.user.firstname, msg)
+    .subscribe(res =>{
+      console.log(res)
+    }, err =>{
+      console.log(err);
+    })
+  } */
+
+  /* formatContactNumber(search: Search): string{
+    let newNumber = search.searcher_contact ? search.searcher_contact: "";
+    if(search.searcher_contact != undefined){
+      if(search.searcher_contact.substring(0, 1) == "0"){
+          newNumber = "+27" + search.searcher_contact.substring(1);
+        }else if(search.searcher_contact.substring(0, 1) == "+"){
+          newNumber = search.searcher_contact;
+        }
+        else if(search.searcher_contact.substring(0, 1) == "27"){
+          newNumber = "+" + search.searcher_contact;
+        }
+    }
+    return newNumber;
+  } */
+
+  //Send a follow up
+  generateWhatsAppLink(): string{
+    //Composing message
+    let msg: string = this.urlEncodedMessge();
+    return `https://wa.me/+27671093186?text=${msg}`;
+  }
+
+  /* whatsAppNumberStatus(search: Search){
+    if(search.searcher_contact != null && search.searcher_contact != ""  
+      && search.contact_on_WhatsApp && search.searcher_contact != undefined){
+
+    }else{
+      let toast = this.toastCtrl.create({
+        duration: 3000,
+        message: "No WhatsApp number provided, sending email..."
+      })
+      toast.present();
+      this.sendMail(search);
+    }
+  } */
 
 }

@@ -41,7 +41,7 @@ export class AccommodationSearchPage implements OnInit {
     .subscribe(usr =>{
       if(usr){
         this.search.searcher = this.user_init_svc.copyClient(usr);
-        console.log(usr);
+        //console.log(usr);
       }
     })
   }
@@ -87,8 +87,6 @@ export class AccommodationSearchPage implements OnInit {
   submitAgentService(){
     this.ion_component_svc.presentLoading();
     this.search.time = Date.now();
-    console.log("For agent service");
-    console.log(this.search)
     this.searchfeed_svc.createSearchOnFeed(this.search)
     .then(ref =>{
       this.search.id = ref.id;
@@ -98,7 +96,7 @@ export class AccommodationSearchPage implements OnInit {
         this.user_svc.updateClient(this.search.searcher);
         this.ion_component_svc.dismissLoading();
         this.close();
-        this.router.navigate(['/agent-scanning', {search_id: this.search.id}])
+        this.router.navigate(['/results', {search_id: this.search.id, client_id: this.search.searcher.uid}])
       })
       .catch(err =>{
         this.ion_component_svc.dismissLoading();
@@ -114,5 +112,7 @@ export class AccommodationSearchPage implements OnInit {
   async close(){
     await this.modal_controller.dismiss();
   }
+
+  
 
 }

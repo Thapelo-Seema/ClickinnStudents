@@ -11,7 +11,6 @@ import { RolesPage } from '../roles/roles.page';
 import { IonicComponentService } from '../../services/ionic-component.service';
 import { UsersService } from '../../object-init/users.service';
 import { SearchFeedService } from '../../services/search-feed.service';
-
 import {take} from 'rxjs/operators';
 import { Client } from 'src/app/models/client.model';
 import { IonicStorageService } from '../../services/ionic-storage.service';
@@ -115,7 +114,7 @@ export class HomePage {
           this.user.user_type = "client";
           this.user_svc.createClient(this.user)
           .then(() =>{
-            this.updateUserFCM();
+            //this.updateUserFCM();
             this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
             //if someone is coming from a link to see a room>>>> navigate to room
             this.navigateToRoomFromLink()
@@ -177,7 +176,7 @@ export class HomePage {
           if(u){
             //console.log("Got persisted client...", u)
             this.user = this.user_init_svc.copyClient(u);
-            this.updateUserFCM()
+            //this.updateUserFCM()
             this.saveUserType(); //If no user type was saved, save it
             if(this.user.current_job != ""){
               this.searchfeed_svc.getSearch(this.user.current_job)
@@ -206,7 +205,7 @@ export class HomePage {
             //console.log("Cached client was not persited on db...persisting: ", this.user)
             this.user_svc.createClient(this.user)
             .then(val => {
-              this.updateUserFCM()
+              //this.updateUserFCM()
               this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
               //if someone is coming from a link to see a room>>>> navigate to room
               this.navigateToRoomFromLink()

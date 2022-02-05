@@ -13,7 +13,7 @@ export class LocationGraphService {
   gauteng_cities: string[] = ['Johannesburg', 'Pretoria']
   Johannesburg_neighbourhoods: string[] = ['Sandton', 'Morningside', 'Suninghill', 
   								 'Bryanston', 'Randburg', 'Hyde Park', 'Auckland Park', 
-  								 'Melville', 'Brixton', 'Hursthill', 'Westdene', 'Crosby', 
+  								 'Melville', 'Brixton', 'Hurst Hill', 'Westdene', 'Crosby', 
   								 'Braamfontein', 'Parktown', 'Doornfontein', 'Johannesburg CBD',
   								 'Midrand', 'Kempton Park', 'Randfontein', 'Krugersdorp', 'Soweto', 
   								 'Edenvale', 'Benoni', 'Boksburg', 'Vereeniging', 'Vanderbijlpark',
@@ -21,7 +21,7 @@ export class LocationGraphService {
 
 
 	auckland_park_neighbourhoods: string[] = [
-		'auckland park', 'melville', 'brixton', 'hursthill', 'westdene', 'crosby',
+		'auckland park', 'melville', 'brixton', 'Hurst Hill', 'westdene', 'crosby',
 		'rossmore', 'cottesloe'
 	]
 
@@ -34,7 +34,7 @@ export class LocationGraphService {
    									   'Wits Business School', 'Wits Education Campus', 
    									   'Wits Medical School', 'Helen Joseph', 'Jeppe College',
    									   'Damelin Braamfontein', 'Boston Media House', 
-   									   'Birnam College', 'Netcare Nursing College']
+   									   'Birnam College', 'Netcare Nursing College', 'AFDA']
 
    	generateCitySuggestions(province: string): string[]{
    		if(province == "Gauteng"){

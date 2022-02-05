@@ -166,21 +166,21 @@ export class RoomService {
     ref.where('display_pic_url', '!=', '')
     .orderBy('display_pic_url')
     .orderBy('rent')
-    .limit(15))
+    .limit(30))
     .valueChanges();
   }
 
   getRecentlyModified(){
     return this.afs.collection<Room>('Rooms', ref =>
-    ref.orderBy('time_modified', 'desc')
-    .limit(15))
+    ref.where("available", "==", true).orderBy('time_uploaded', 'desc')
+    .limit(30))
     .valueChanges();
   }
 
   getRecentlyUpdated(){
     return this.afs.collection<Room>('Rooms', ref =>
-    ref.orderBy('time_uploaded', 'desc')
-    .limit(15))
+    ref.where("available", "==", true).orderBy('time_uploaded', 'desc')
+    .limit(30))
     .valueChanges();
   }
 

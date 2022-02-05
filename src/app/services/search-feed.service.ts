@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { RoomSearch } from '../models/room-search.model';
 import { LocationGraphService } from './location-graph.service';
 import { User } from '../models/user.model';
+import { UsersService } from '../object-init/users.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class SearchFeedService {
 
   constructor(
     private afs: AngularFirestore,
+    private user_init_svc: UsersService,
     private location_graph_svc: LocationGraphService) { }
 
   createSearchOnFeed(search: RoomSearch){
@@ -30,7 +32,7 @@ export class SearchFeedService {
 
   defaultSearch(){
     let search: RoomSearch = {
-      agent: null,
+      agent: this.user_init_svc.defaultUser(),
       agents_cancelled:  [],
       institution_and_campus: "",
       institution_address: null,
@@ -40,7 +42,7 @@ export class SearchFeedService {
       parking_needed: false,
       gender_prefference: "",
       preffered_property_type: "",
-      searcher: null,
+      searcher: this.user_init_svc.defaultClient(),
       special_needs: "",
       completed: false,
       id: "",
@@ -51,7 +53,7 @@ export class SearchFeedService {
 
   copySearch(_search: RoomSearch){
     let search: RoomSearch = {
-      agent: _search.agent || null,
+      agent: _search.agent || this.user_init_svc.defaultUser(),
       agents_cancelled: _search.agents_cancelled || [],
       institution_and_campus: _search.institution_and_campus || "",
       institution_address: _search.institution_address || null,
@@ -61,7 +63,7 @@ export class SearchFeedService {
       parking_needed: _search.parking_needed || false,
       gender_prefference: _search.gender_prefference || "",
       preffered_property_type: _search.preffered_property_type || "",
-      searcher: _search.searcher || null,
+      searcher: _search.searcher || this.user_init_svc.defaultClient(),
       special_needs: _search.special_needs || "",
       completed: _search.completed || false,
       id: _search.id || "",
