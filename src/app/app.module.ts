@@ -15,7 +15,7 @@ import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { environment } from 'src/environments/environment';
 import { IonicStorageModule } from '@ionic/storage-angular';
-import { ServiceWorkerModule } from '@angular/service-worker';
+//import { ServiceWorkerModule } from '@angular/service-worker';
 import { AngularFireMessagingModule } from '@angular/fire/compat/messaging';
 
 
@@ -24,12 +24,7 @@ import { AngularFireMessagingModule } from '@angular/fire/compat/messaging';
   entryComponents: [],
   imports: [BrowserModule, IonicModule.forRoot(), IonicStorageModule.forRoot(), AppRoutingModule, HttpClientModule,
     AngularFireModule.initializeApp(environment.firebaseConfig), AngularFirestoreModule, AngularFireMessagingModule,
-    AngularFireStorageModule, AngularFireAuthModule, ServiceWorkerModule.register('combined-sw.js', {
-  enabled: environment.production,
-  // Register the ServiceWorker as soon as the app is stable
-  // or after 30 seconds (whichever comes first).
-  registrationStrategy: 'registerWhenStable:30000'
-})],
+    AngularFireStorageModule, AngularFireAuthModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })
