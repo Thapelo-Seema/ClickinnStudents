@@ -252,6 +252,11 @@ export class RoomPage implements OnInit {
     return encodeURI(msg);
   }
 
+  urlEncodedShareMessge(): string{
+    let msg = "https://clickinn.co.za/room;room_id=" + this.room.room_id;
+    return encodeURI(msg);
+  }
+
   /* sendMail(search: Search){
     let msg: string = `Hi my name is ${this.user.firstname}, I am responding to your search on Clickinn.\n`;
     if(search.apartment_type == 'Any'){
@@ -289,6 +294,11 @@ export class RoomPage implements OnInit {
     //Composing message
     let msg: string = this.urlEncodedMessge();
     return `https://wa.me/+27671093186?text=${msg}`;
+  }
+
+  share(){
+    let msg: string = this.urlEncodedShareMessge();
+    return `https://wa.me/?text=${msg}`;
   }
 
   /* whatsAppNumberStatus(search: Search){
