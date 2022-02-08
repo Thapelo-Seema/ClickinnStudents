@@ -9,9 +9,6 @@ import { Platform } from '@ionic/angular';
 })
 export class AppComponent {
   constructor(private ionic_component_svc: IonicComponentService, private platform: Platform) {
-    this.ionic_component_svc.presentLoading()
-    setTimeout(() =>{
-      this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-    }, 4000)
+
   }
 }

@@ -30,6 +30,11 @@ export class SearchFeedService {
     return this.afs.collection('SearchFeed').doc(search.id).update(search);
   }
 
+  getPropertyRooms(property_id: string){
+		return this.afs.collection<Room>('Rooms', ref => ref.where('property.property_id', '==', property_id))
+		.valueChanges();
+	}
+
   defaultSearch(){
     let search: RoomSearch = {
       agent: this.user_init_svc.defaultUser(),
@@ -194,5 +199,22 @@ export class SearchFeedService {
             .where("online", "==", true)
             .where("busy_with_job", "==", false)
       ).valueChanges()
+  }
+
+  getPlacesForCampus(search: RoomSearch){
+    let locations: string[] = [];
+      //generate a list of surrounding areas
+      if(this.location_graph_svc.auckland_park_neighbourhoods.indexOf(search.institution_address.neighbourhood) != -1){
+        locations = this.location_graph_svc.auckland_park_neighbourhoods;
+      }else{
+        locations = this.location_graph_svc.auckland_park_neighbourhoods;
+      }
+      //Capitalize the first character in the location name for easy comparison
+      for(let i = 0; i < locations.length; i++){
+        locations[i] = locations[i].charAt(0).toUpperCase() + locations[i].slice(1);
+      }
+    return this.afs.collection<Room>("Rooms", ref =>
+    ref.where("property.address.neighbourhood", "in", locations))
+    .valueChanges()
   }
 }

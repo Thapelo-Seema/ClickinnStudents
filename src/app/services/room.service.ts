@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { RoomSearch } from '../models/room-search.model';
 import { BannerItem } from '../models/banner-item.model';
 import { Property } from '../models/property.model';
+import { Address } from '../models/address.model';
 //import { SearchFeedService } from './search-feed.service';
 
 @Injectable({
@@ -131,8 +132,10 @@ export class RoomService {
 		return this.afs.collection<Room>('Rooms').doc(room.room_id).update(Object.assign({}, adapted_room));
 	}
 
-	getPropertyRooms(property_id: string){
-		return this.afs.collection<Room>('Rooms', ref => ref.where('property.property_id', '==', property_id))
+	getPropertyRooms(address: Address){
+		return this.afs.collection<Room>('Rooms', ref => 
+    ref.where('property.address.lat', '==', address.lat)
+    .where('property.address.lng', '==', address.lng))
 		.valueChanges();
 	}
 

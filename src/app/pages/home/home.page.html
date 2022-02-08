@@ -62,6 +62,48 @@
         </ion-card>
       </div>
 
+      <ion-item lines="none" class="">
+        <h1 class="travel_header2">Choose Your Campus & Browse</h1>
+      </ion-item>
+
+      <div class="horizontal-scroll ion-margin-bottom">
+        <ion-chip class="campus-chip" tappable color="thapsblue" outline=true (click)="createAreaSearch('UJ Kingsway')">
+          <div>
+            <ion-label>UJ Kingsway</ion-label>
+          </div>
+        </ion-chip>
+        <ion-chip class="campus-chip" tappable color="thapsblue" outline=true (click)="createAreaSearch('UJ Bunting')">
+          <div>
+            <ion-label>UJ Bunting</ion-label>
+          </div>
+        </ion-chip>
+        <ion-chip class="campus-chip" tappable color="thapsblue" outline=true (click)="createAreaSearch('UJ Doornfontein')">
+          <div>
+            <ion-label>UJ Doornfontein</ion-label>
+          </div>
+        </ion-chip>
+        <ion-chip class="campus-chip" tappable color="thapsblue" outline=true (click)="createAreaSearch('UJ Soweto')">
+          <div>
+            <ion-label>UJ Soweto</ion-label>
+          </div>
+        </ion-chip>
+        <ion-chip class="campus-chip" tappable color="thapsblue" outline=true (click)="createAreaSearch('SABC')">
+          <div>
+            <ion-label>SABC</ion-label>
+          </div>
+        </ion-chip>
+        <ion-chip class="campus-chip" tappable color="thapsblue" outline=true (click)="createAreaSearch('Academy of Sound Engineering')">
+          <div>
+            <ion-label>Academy of Sound Engineering</ion-label>
+          </div>
+        </ion-chip>
+        <ion-chip class="campus-chip" tappable color="thapsblue" outline=true (click)="createAreaSearch('Netcare Auckland Park')">
+          <div>
+            <ion-label>Netcare Auckland Park</ion-label>
+          </div>
+        </ion-chip>
+      </div>
+
       <!--*********** Recommened ***********-->
       <ion-item lines="none">
         <h1 class="main-header5">Recently updated places</h1>
@@ -108,7 +150,7 @@
         <h1 class="main-header5">Do business with us</h1>
       </ion-item>
 
-      <ion-slides class="swiper-container slide-left" pager= false [options]="slideOption" #slidesThree mode="ios">
+      <ion-slides class="swiper-container slide-left" pager= false [options]="slideOption2" #slidesThree mode="ios">
         
         <ion-slide (click)="openRoleModal('Landlord')"> 
           <ion-card  class="shop-main-h-card shop-card-s-wide " >

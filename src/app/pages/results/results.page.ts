@@ -28,21 +28,39 @@ export class ResultsPage implements OnInit {
     }
 
   ngOnInit(){
-
+    this.ionic_component_svc.presentLoading();
     if(this.activated_route.snapshot.paramMap.get('search_id')){
-      this.search.id = this.activated_route.snapshot.paramMap.get('search_id');
-      this.searchfeed_svc.getSearch(this.search.id)
-      .pipe(take(1))
-      .subscribe(sch =>{
-        if(sch){
-          this.search = this.room_search_init_svc.copySearch(sch);
-          this.searchfeed_svc.getRoomSearchResults(sch)
-          .pipe(take(1))
-          .subscribe(rms =>{
-            this.rooms = rms;
-          })
-        }
-      })
+      if(this.activated_route.snapshot.paramMap.get('search_id')){
+        this.search.id = this.activated_route.snapshot.paramMap.get('search_id');
+        this.searchfeed_svc.getSearch(this.search.id)
+        .pipe(take(1))
+        .subscribe(sch =>{
+          if(sch){
+            this.search = this.room_search_init_svc.copySearch(sch);
+            this.searchfeed_svc.getPlacesForCampus(sch)
+            .pipe(take(2))
+            .subscribe(rms =>{
+              this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+              this.rooms = rms;
+            })
+          }
+        })
+      }else{
+        this.search.id = this.activated_route.snapshot.paramMap.get('search_id');
+        this.searchfeed_svc.getSearch(this.search.id)
+        .pipe(take(1))
+        .subscribe(sch =>{
+          if(sch){
+            this.search = this.room_search_init_svc.copySearch(sch);
+            this.searchfeed_svc.getRoomSearchResults(sch)
+            .pipe(take(2))
+            .subscribe(rms =>{
+              this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+              this.rooms = rms;
+            })
+          }
+        })
+      }
     }
   }
 

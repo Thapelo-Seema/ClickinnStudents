@@ -26,6 +26,17 @@ export class RoomPage implements OnInit {
     grabCursor: true
   };
 
+  //Slider configuration 
+  slideOptsOne = {
+    initialSlide: 0,
+    //slidesPerView: 1,
+    slidesPerView: 1,
+    spaceBetween: 30,
+    freeMode: true,
+    //autoplay: true
+  };
+
+
   parentPath:any;
   uploader_pic_loaded: boolean = false;
   client_id: string = '';
@@ -61,6 +72,7 @@ export class RoomPage implements OnInit {
   userAuth: boolean = false; // Is user logged in ?
   userId: any;
   room: Room;
+  rooms: Room[] = [];
   pictures: FileUpload[] = [];
   client: Client;
 
@@ -80,18 +92,26 @@ export class RoomPage implements OnInit {
 
   ngOnInit() {
     if(this.activatedRoute.snapshot.paramMap.get("room_id")){
+      this.ionicComponentService.presentLoading()
       this.room_svc.getRoom(this.activatedRoute.snapshot.paramMap.get('room_id'))
       .pipe(take(1))
       .subscribe(rm =>{
         this.room = rm;
+        this.room_svc.getPropertyRooms(rm.property.address)
+        .pipe(take(2))
+        .subscribe(rooms =>{
+          console.log(rooms)
+          this.rooms = rooms;
+          console.log(this.rooms)
+          this.ionicComponentService.dismissLoading().catch(err => console.log(err))
+        })
         this.room.pictures.forEach(p =>{
           this.pictures.push(p);
         });
         this.room.property.pictures.forEach(p =>{
           this.pictures.push(p);
         })
-        console.log(this.room);
-        console.log(this.pictures)
+        //this.ionicComponentService.dismissLoading().catch(err => console.log(err))
       })
     }
     if(this.activatedRoute.snapshot.paramMap.get("client_id")){
@@ -104,12 +124,21 @@ export class RoomPage implements OnInit {
     }
   }
 
+  ionViewWillLoad(){
+
+  }
+
   ngOnDestroy() {
 		//this.sub.unsubscribe()
   }
 
   updateDisplayPicLoaded(){
     this.uploader_pic_loaded = true;
+  }
+
+  openDetail(accommodationId) {
+    console.log("Navigating to room: ", accommodationId)
+    this.router.navigate(['/room', {'room_id': accommodationId, 'client_id': this.client.uid}]);
   }
 
   openPic(pic){
@@ -215,9 +244,7 @@ export class RoomPage implements OnInit {
     });
     return await modal.present();
   } */
-  openDetail(url,itemId){
-    this.router.navigateByUrl('/'+url+'/'+itemId);
-  }
+  
 
   urlEncodedMessge(): string{
     let msg: string = `Hi my name is ${this.client.firstname}, I would like to enquire if this room is still available.\n`;

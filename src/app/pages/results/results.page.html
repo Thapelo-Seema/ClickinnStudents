@@ -129,67 +129,49 @@
 
   <ion-grid *ngIf="!show_search" fixed class="ion-no-padding">
     <ion-card tappable mode="ios"  *ngFor="let room of rooms" (click)="gotoRoom(room)">
-          <ion-item lines="none">
-            <ion-label>
-              <h3>{{room.room_type}}</h3>
-              <p>{{ room.rent | currency : 'R' : 'symbol' : '1.0-0' }}</p>
-            </ion-label>
-          </ion-item>
-          <ion-slides pager style="background-color: #dddddd;">
-              <ng-container *ngFor="let images of  room.pictures | slice:1">
-            <ion-slide  [ngStyle]="{'background' : 'url(' + images.url + ')'}">
-            </ion-slide>
-              </ng-container>
-          </ion-slides>
-        
+      
+      <ion-slides pager>
+        <ion-slide *ngFor="let image of  room.pictures">
+          <img src="{{image.url}}" width="100%" height="100%">
+        </ion-slide>
+      </ion-slides>
       <ion-card-content>
-        <ion-card-title>
-          <h3 class="main_header4">  {{room.property.address.neighbourhood}}</h3>
-        </ion-card-title>
-        <p>
-          {{room.description}}
-        </p>
+        <ion-item class="ion-no-padding" lines="none">
+          <ion-label>
+            <h3>{{room.room_type}} in {{room.property.address.neighbourhood}}</h3>
+            <p>{{ room.rent | currency : 'R' : 'symbol' : '1.0-0' }}</p>
+          </ion-label>
+        </ion-item>
+        <ion-row wrap>
+            
+          <ion-col tappable  size="6">
+            <ion-item class="ion-no-margin ion-no-padding" lines="none">
+              <ion-icon *ngIf="room.furnished" class="margin-right-15" name="checkmark-circle-outline" color="greensea" slot="start">
+              </ion-icon>
+              <ion-icon *ngIf="!room.furnished" class="margin-right-15" name="close-outline" color="danger" slot="start">
+              </ion-icon>
+              <ion-label>
+                <p>Furnished</p>
+              </ion-label>
+            </ion-item>
+          </ion-col>
+        
+          <ion-col tappable size="6">
+            <ion-item class="ion-no-margin ion-no-padding" lines="none">
+              <ion-icon *ngIf="room.accredited" class="margin-right-15" name="checkmark-circle-outline" color="greensea" slot="start">
+              </ion-icon>
+              <ion-icon *ngIf="!room.accredited" class="margin-right-15" name="close-outline" color="danger" slot="start">
+              </ion-icon>
+              <ion-label>
+                <p>Accredited</p>
+              </ion-label>
+            </ion-item>
+          </ion-col>
+          </ion-row>
       </ion-card-content>
       
-      <ion-row>
-          <ion-col>
-            
-
-            <ion-button fill="clear" size="small" color="dark">
-              <ion-icon slot="start"  name="heart-outline" color="medium"></ion-icon>
-              <!-- <ion-badge color="danger">2.3k</ion-badge> -->
-              <ion-label> {{room.search_rating}}</ion-label>
-            </ion-button>     
-            <!-- <ion-button fill="clear" size="small" color="dark">
-              <ion-icon slot="start" name="ios-chatboxes" color="gray"></ion-icon>
-              {{feed.comment}}
-            </ion-button> -->
-            <!-- <ion-button fill="clear" size="small" color="dark">
-                <ion-icon slot="start" name="ios-heart" color="gray"></ion-icon>
-                {{feed.like}}
-            </ion-button> -->
-          </ion-col>
-    
-          <!-- <ion-col center class="ion-text-right"> 
-            <ion-button fill="clear" size="small" color="dark">
-              <ion-icon slot="start"  name="arrow-redo-outline" color="medium"></ion-icon>
-              
-              <ion-label> REPLY</ion-label>
-            </ion-button>  
-          </ion-col> -->
-      </ion-row>
-  
     </ion-card>
-  <!-- 
-    <ion-fab right bottom>
-        <button ion-fab color="amber"><ion-icon name="md-share"></ion-icon></button>
-        <ion-fab-list side="top">
-          <button ion-fab><ion-icon name="logo-facebook"></ion-icon></button>
-          <button ion-fab><ion-icon name="logo-twitter"></ion-icon></button>
-          <button ion-fab><ion-icon name="logo-vimeo"></ion-icon></button>
-          <button ion-fab><ion-icon name="logo-googleplus"></ion-icon></button>
-        </ion-fab-list>
-    </ion-fab> -->
+
 </ion-grid>
 
 
