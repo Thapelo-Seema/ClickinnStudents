@@ -28,6 +28,10 @@ export class ResultsPage implements OnInit {
     }
 
   ngOnInit(){
+    
+  }
+
+  ionViewWillEnter(){
     this.ionic_component_svc.presentLoading();
     if(this.activated_route.snapshot.paramMap.get('search_id')){
       if(this.activated_route.snapshot.paramMap.get('search_id')){

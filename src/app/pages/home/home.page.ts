@@ -4,7 +4,6 @@ import { MenuController, ModalController} from '@ionic/angular';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { RoomService } from '../../services/room.service';
-import { Observable} from 'rxjs';
 import { AccommodationSearchPage } from '../accommodation-search/accommodation-search.page';
 import { BannerDetailsPage } from '../../pages/banner-details/banner-details.page';
 import { RolesPage } from '../roles/roles.page';
@@ -53,12 +52,9 @@ export class HomePage {
     grabCursor: true,
     //autoplay: true,
   };
-  
-  // ******** for Cart ***********//
-  cart = [];
 
   //********* Observable *********/
-  categories: Observable<any[]>; //the different roles on the platform 
+  //categories: Observable<any[]>; //the different roles on the platform 
   recommended: Room[] = [];  //recommended properties (reses/accommmodations/places)
   banners: any[] = [];  //informational banners at the top
 
@@ -92,6 +88,10 @@ export class HomePage {
 
   ngOnInit() {
     //Get authenticated user, if none, create one
+    
+  }
+
+  ionViewWillEnter(){
     this.ionic_component_svc.presentLoading();
     this.authService.getAuthenticatedUser()
     .pipe(take(1))
@@ -147,9 +147,10 @@ export class HomePage {
     this.authService.signUpAnonymously().then(dat =>{
       this.getHomePageResources();
       //check if we have a client saved offline
+      this.user.uid = dat.user.uid;
       this.storage_svc.getUID()
       .then(data =>{
-        if(data){
+        if(data && data.length > 0){
           this.user.uid = data;
           this.fetchExistingClient();
         }else{
@@ -287,98 +288,94 @@ navigateToRoomFromLink(){
   }
 }
 
-  
+saveUserType(){
+  this.storage_svc.getUserType()
+  .then(val =>{
+    if(!val) this.storage_svc.setUserType()
+  })
+  .catch(err => console.log(err))
+}
 
-  saveUserType(){
-    this.storage_svc.getUserType()
-    .then(val =>{
-      if(!val) this.storage_svc.setUserType()
-    })
-    .catch(err => console.log(err))
+//Get banners and recently modified places
+getHomePageResources(){
+  this.room_svc.getBanners()
+  .subscribe(bns =>{
+    this.banners = bns;
+  })
+  this.room_svc.getRecentlyModified()
+  .subscribe(rec =>{
+    this.recommended = rec;
+  })
+}
+
+gotoSearch(sch: RoomSearch){
+  if( sch.agent && sch.agent.contacts.indexOf(this.user.uid) != -1){
+    let index = sch.agent.contacts.indexOf(this.user.uid);
+    let thread_id = sch.agent.thread_ids[index];
+    this.router.navigate(['/chat', {'thread_id': thread_id, 'search_id': sch.id}])
+  }else{
+    this.router.navigate(['/agent-scanning', {'search_id': sch.id}])
   }
+}
 
-  //Get banners and recently modified places
-  getHomePageResources(){
-    this.room_svc.getBanners()
-    .subscribe(bns =>{
-      this.banners = bns;
-    })
-    this.room_svc.getRecentlyModified()
-    .subscribe(rec =>{
-      this.recommended = rec;
-    })
-  }
+toggleSideMenu() {
+  this.menuCtrl.toggle(); //Add this method to your button click function
+}
 
-  gotoSearch(sch: RoomSearch){
-    if( sch.agent && sch.agent.contacts.indexOf(this.user.uid) != -1){
-      let index = sch.agent.contacts.indexOf(this.user.uid);
-      let thread_id = sch.agent.thread_ids[index];
-      this.router.navigate(['/chat', {'thread_id': thread_id, 'search_id': sch.id}])
-    }else{
-      this.router.navigate(['/agent-scanning', {'search_id': sch.id}])
+//Open accommodation search modal
+async openSearchModal(client_id) {
+  console.log(client_id);
+  console.log("open modal");
+  const modal = await this.modalController.create({
+    component: AccommodationSearchPage,
+    cssClass: "small-modal",
+    componentProps: {
+      uid: client_id
+    },
+    showBackdrop: true
+  });
+  return await modal.present();
+}
+
+updateRoomDisplayPicLoaded(i){
+  this.recommended[i].dp_loaded = true;
+}
+
+async openSpecialModal(id) {
+  const modal = await this.modalController.create({
+    component: BannerDetailsPage,
+    componentProps: {
+      specialId: id
     }
-  }
+  });
+  return await modal.present();
+}
 
-  
-  toggleSideMenu() {
-    this.menuCtrl.toggle(); //Add this method to your button click function
-  }
+async openRoleModal(_role) {
+  const modal = await this.modalController.create({
+    component: RolesPage,
+    componentProps: {
+      role: _role,
+      uid: this.user.uid
+    }
+  });
+  return await modal.present();
+}
 
-  //Open accommodation search modal
-  async openSearchModal(client_id) {
-    console.log(client_id);
-    console.log("open modal");
-    const modal = await this.modalController.create({
-      component: AccommodationSearchPage,
-      cssClass: "small-modal",
-      componentProps: {
-        uid: client_id
-      },
-      showBackdrop: true
-    });
-    return await modal.present();
-  }
+openDetail(accommodationId) {
+  this.router.navigate(['/room', {'room_id': accommodationId, 'client_id': this.user.uid}]);
+}
 
-  updateRoomDisplayPicLoaded(i){
-    this.recommended[i].dp_loaded = true;
-  }
+gotoSignin(){
+  this.router.navigateByUrl('/signin');
+}
 
-  async openSpecialModal(id) {
-    const modal = await this.modalController.create({
-      component: BannerDetailsPage,
-      componentProps: {
-        specialId: id
-      }
-    });
-    return await modal.present();
-  }
+gotoAppointments(){
+  this.router.navigate(['/appointments', {'client_id': this.user.uid}])
+}
 
-  async openRoleModal(_role) {
-    const modal = await this.modalController.create({
-      component: RolesPage,
-      componentProps: {
-        role: _role,
-        uid: this.user.uid
-      }
-    });
-    return await modal.present();
-  }
-
-
-  openDetail(accommodationId) {
-    this.router.navigate(['/room', {'room_id': accommodationId, 'client_id': this.user.uid}]);
-  }
-
-  gotoSignin(){
-    this.router.navigateByUrl('/signin');
-  }
-
-  gotoAppointments(){
-    this.router.navigate(['/appointments', {'client_id': this.user.uid}])
-  }
-
-  gotoChats(){
-    this.router.navigate(['/chats', {'client_id': this.user.uid}])
-  }
+gotoChats(){
+  this.router.navigate(['/chats', {'client_id': this.user.uid}])
+}
 
 }

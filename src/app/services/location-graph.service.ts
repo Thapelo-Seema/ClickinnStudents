@@ -22,7 +22,7 @@ export class LocationGraphService {
 
 	auckland_park_neighbourhoods: string[] = [
 		'Auckland Park', 'melville', 'brixton', 'Hurst Hill', 'westdene', 'crosby',
-		'rossmore', 'cottesloe', 'Jan Hofmeyer'
+		'rossmore', 'cottesloe', 'Jan Hofmeyer', 'Vrededorp'
 	]
 
    Pretoria_neighbourhoods: string[] = ['Pretoria CBD', 'Hatefield', 'Sunnyside', 'Centurion',

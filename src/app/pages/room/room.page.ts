@@ -91,6 +91,10 @@ export class RoomPage implements OnInit {
   }
 
   ngOnInit() {
+    
+  }
+
+  ionViewWillEnter(){
     if(this.activatedRoute.snapshot.paramMap.get("room_id")){
       this.ionicComponentService.presentLoading()
       this.room_svc.getRoom(this.activatedRoute.snapshot.paramMap.get('room_id'))
@@ -122,10 +126,6 @@ export class RoomPage implements OnInit {
         this.client = this.user_init_svc.copyClient(clt);
       })
     }
-  }
-
-  ionViewWillLoad(){
-
   }
 
   ngOnDestroy() {
