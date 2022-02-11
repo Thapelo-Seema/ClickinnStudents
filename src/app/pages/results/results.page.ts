@@ -5,7 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IonicComponentService } from '../../services/ionic-component.service';
 import { SearchFeedService } from '../../services/search-feed.service';
 import { Room } from 'src/app/models/room.model';
-import { take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-results',
@@ -14,8 +15,9 @@ import { take } from 'rxjs/operators';
 })
 export class ResultsPage implements OnInit {
 
-  rooms: Room[] = [];
+  rooms: Observable<Room[]>;
   search: RoomSearch;
+  results: number = 0;
   i = 0;
   show_search: boolean = false;
   constructor(
@@ -34,37 +36,19 @@ export class ResultsPage implements OnInit {
   ionViewWillEnter(){
     this.ionic_component_svc.presentLoading();
     if(this.activated_route.snapshot.paramMap.get('search_id')){
-      if(this.activated_route.snapshot.paramMap.get('search_id')){
-        this.search.id = this.activated_route.snapshot.paramMap.get('search_id');
-        this.searchfeed_svc.getSearch(this.search.id)
-        .pipe(take(1))
-        .subscribe(sch =>{
-          if(sch){
-            this.search = this.room_search_init_svc.copySearch(sch);
-            this.searchfeed_svc.getPlacesForCampus(sch)
-            .pipe(take(2))
-            .subscribe(rms =>{
-              this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-              this.rooms = rms;
-            })
-          }
-        })
-      }else{
-        this.search.id = this.activated_route.snapshot.paramMap.get('search_id');
-        this.searchfeed_svc.getSearch(this.search.id)
-        .pipe(take(1))
-        .subscribe(sch =>{
-          if(sch){
-            this.search = this.room_search_init_svc.copySearch(sch);
-            this.searchfeed_svc.getRoomSearchResults(sch)
-            .pipe(take(2))
-            .subscribe(rms =>{
-              this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-              this.rooms = rms;
-            })
-          }
-        })
-      }
+      this.search.id = this.activated_route.snapshot.paramMap.get('search_id');
+      this.searchfeed_svc.getSearch(this.search.id)
+      .pipe(take(1))
+      .subscribe(sch =>{
+        if(sch){
+          this.search = this.room_search_init_svc.copySearch(sch);
+          this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+          this.rooms  = this.searchfeed_svc.getPlacesForCampus(sch).pipe(tap(_rooms =>{
+            this.results = _rooms.length;
+          }))
+          
+        }
+      })
     }
   }
 

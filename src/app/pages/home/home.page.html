@@ -11,14 +11,14 @@
     </ion-chip>
     <ion-chip tappable (click)="gotoSearch(search)" *ngIf="search?.room_type != '' && search?.institution_and_campus != ''">
       <ion-avatar>
-        <ion-icon name="search-outline"></ion-icon>
+        <ion-icon name="search-outline" color="success"></ion-icon>
       </ion-avatar>
       <ion-label color="success">
         Active Search
       </ion-label>
     </ion-chip>
   </ion-toolbar>
-  <ion-toolbar color="thapsblue"> 
+  <!-- <ion-toolbar color="thapsblue"> 
     <ion-row>
       <ion-col>
         <ion-tab-button (click)="gotoAppointments()">
@@ -33,7 +33,7 @@
         </ion-tab-button>
       </ion-col>
     </ion-row>
-  </ion-toolbar>
+  </ion-toolbar> -->
 </ion-header>
 
 <ion-content no-padding>
@@ -54,7 +54,7 @@
       <!--*********** Banner  ***********-->
 
       <div class="horizontal-scroll-banner slide-left ">
-        <ion-card tappable class="shop-main-h-card shop-banner " *ngFor="let bi of banners; let i = index" (click)="openSpecialModal(bi.id)" >
+        <ion-card tappable class="shop-main-h-card shop-banner " *ngFor="let bi of banners | async ; let i = index" (click)="openSpecialModal(bi.id)" >
           <div class="shop-banner-bg ion-text-uppercase" [ngStyle]="{'background-image': 'url(' + bi?.pic+ ')'}" >
             <!-- <div *ngIf="banner.special" class="ribbon">{{banner.special_message}}</div> -->
             <p class="card2-title ion-text-wrap">{{bi?.title}}</p>                           
@@ -110,22 +110,18 @@
       </ion-item>
 
       <ion-slides class="swiper-container" pager= false [options]="slideOption" #slidesTwo mode="ios">
-        <ion-slide tappable  *ngFor="let rec of recommended; let i = index" (click)="openDetail(rec?.room_id)"> 
+        <ion-slide tappable  *ngFor="let rec of recommended | async ; let i = index" (click)="openDetail(rec?.room_id)"> 
           <ion-card class="shop-main-h-card shop-card-tall   slide-right">
             <div *ngIf="rec.property.accredited" class="ribbon">NSFAS</div>
             <div class="shop-div-tall-bg"> 
-              <img src="{{rec?.display_pic_url}}" height="100%" width="100%" (load)="updateRoomDisplayPicLoaded(i)" [hidden]="!rec.dp_loaded">
+              <img src="{{rec?.display_pic_url}}" height="100%" width="100%">
             </div>
-            <!--<div class="ion-margin-top">{{recommended.name}}</div>
-                    <ion-icon  style="font-size: 14px !important;" color="warning" *ngFor="let i of [0,1,2,3,4]" [name]="i < recommended.rating  ? 'star' : 'star-outline'"></ion-icon>
-                    <div class="main-b-header7" color="green">${{recommended.price}}</div> -->
             <div class="ion-margin-top main-header8" text-wrap>{{rec.property?.address.neighbourhood}}</div>
             <ion-icon style="font-size: 12px !important;" color="warning" *ngFor="let i of [0,1,2,3,4]"
               [name]="i < 3  ? 'star' : 'star-outline'"></ion-icon>
             <div class="main-b-header9">
               <ion-text color="grey"> {{rec.rent | currency : 'R'}}</ion-text>
             </div>
-            <!-- <div class="margin-bottom-10"></div> -->
           </ion-card>
         </ion-slide>
       </ion-slides>

@@ -48,15 +48,18 @@
           </ion-slide>
         </ion-slides>
         <div>
+          <h1>Select Date & Time, And Confirm Appointment</h1>
           <ion-datetime (ionChange)="datetimeChanged($event)">
           </ion-datetime>
-          <ion-button color="thapsblue" expand="block" href="{{generateWhatsAppLink()}}">   
+        </div>
+        <div>
+          <ion-button color="thapsblue" class="ion-margin" href="{{generateWhatsAppLink()}}">   
             Confirm Appointment
             <ion-icon name="paper-plane-outline" slot="end"></ion-icon>
           </ion-button>
         </div>
         <ion-item lines="none">
-          <h1 class="main-header5">Details</h1>
+          <h1 class="main-header5">Appointment Details</h1>
         </ion-item>
         <ion-list class="ion-text-center">
           <ion-item lines="none" >
@@ -90,7 +93,7 @@
             </ion-label>
           </ion-item>
         </ion-list>
-        <ion-button color="thapsblue" expand="block" fill="outline" href="{{generateWhatsAppLink()}}">   
+        <ion-button color="thapsblue" fill="outline" href="{{generateWhatsAppLink()}}">   
           Confirm Appointment
           <ion-icon name="paper-plane-outline" slot="end"></ion-icon>
         </ion-button>

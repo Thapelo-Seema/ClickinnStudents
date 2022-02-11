@@ -17,6 +17,7 @@ import { RoomSearch } from 'src/app/models/room-search.model';
 import { Room } from 'src/app/models/room.model';
 import { AngularFireMessaging } from '@angular/fire/compat/messaging';
 import { MapsService } from '../../services/maps.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -55,8 +56,8 @@ export class HomePage {
 
   //********* Observable *********/
   //categories: Observable<any[]>; //the different roles on the platform 
-  recommended: Room[] = [];  //recommended properties (reses/accommmodations/places)
-  banners: any[] = [];  //informational banners at the top
+  recommended: Observable<Room[]>;  //recommended properties (reses/accommmodations/places)
+  banners: Observable<any[]>;  //informational banners at the top
 
   //*******Own varibales */
   present_search: boolean = false;
@@ -88,7 +89,6 @@ export class HomePage {
 
   ngOnInit() {
     //Get authenticated user, if none, create one
-    
   }
 
   ionViewWillEnter(){
@@ -109,37 +109,36 @@ export class HomePage {
   }
 
   createAreaSearch(institution_and_campus: string){
-      this.ionic_component_svc.presentLoading();
-      this.area_search.institution_and_campus = institution_and_campus
-      this.maps_svc.getPlaceFromAddress(this.area_search.institution_and_campus)
-      .then(data =>{
-        this.maps_svc.getSelectedPlace(data[0])
-        .then(address =>{
-          this.area_search.institution_address = address;
-          this.area_search.completed = true;
-          this.area_search.searcher = this.user_init_svc.copyClient(this.user);
-          this.area_search.time = Date.now();
-          this.searchfeed_svc.createSearchOnFeed(this.area_search)
-          .then(ref =>{
-            this.area_search.id = ref.id;
-            this.searchfeed_svc.updateSearch(this.area_search)
-            .then(() =>{
-              this.ionic_component_svc.dismissLoading();
-              this.router.navigate(['/results', {search_id: this.area_search.id, 
-                client_id: this.search.searcher.uid, campus_search: institution_and_campus}])
-            })
-            .catch(err =>{
-              this.ionic_component_svc.dismissLoading();
-              this.ionic_component_svc.presentAlert(err.message);
-            })
+    this.ionic_component_svc.presentLoading();
+    this.area_search.institution_and_campus = institution_and_campus
+    this.maps_svc.getPlaceFromAddress(this.area_search.institution_and_campus)
+    .then(data =>{
+      this.maps_svc.getSelectedPlace(data[0])
+      .then(address =>{
+        this.area_search.institution_address = address;
+        this.area_search.completed = true;
+        this.area_search.searcher = this.user_init_svc.copyClient(this.user);
+        this.area_search.time = Date.now();
+        this.searchfeed_svc.createSearchOnFeed(this.area_search)
+        .then(ref =>{
+          this.area_search.id = ref.id;
+          this.searchfeed_svc.updateSearch(this.area_search)
+          .then(() =>{
+            this.ionic_component_svc.dismissLoading();
+            this.router.navigate(['/results', {search_id: this.area_search.id, 
+              client_id: this.search.searcher.uid, campus_search: institution_and_campus}])
           })
           .catch(err =>{
             this.ionic_component_svc.dismissLoading();
             this.ionic_component_svc.presentAlert(err.message);
           })
         })
+        .catch(err =>{
+          this.ionic_component_svc.dismissLoading();
+          this.ionic_component_svc.presentAlert(err.message);
+        })
       })
-    
+    })
   }
 
   //Authenticate on firebase but check also if there's a client saved offline and allow this client to use the authstate
@@ -298,14 +297,8 @@ saveUserType(){
 
 //Get banners and recently modified places
 getHomePageResources(){
-  this.room_svc.getBanners()
-  .subscribe(bns =>{
-    this.banners = bns;
-  })
-  this.room_svc.getRecentlyModified()
-  .subscribe(rec =>{
-    this.recommended = rec;
-  })
+  this.banners = this.room_svc.getBanners();
+  this.recommended = this.room_svc.getRecentlyModified();
 }
 
 gotoSearch(sch: RoomSearch){
@@ -335,10 +328,6 @@ async openSearchModal(client_id) {
     showBackdrop: true
   });
   return await modal.present();
-}
-
-updateRoomDisplayPicLoaded(i){
-  this.recommended[i].dp_loaded = true;
 }
 
 async openSpecialModal(id) {

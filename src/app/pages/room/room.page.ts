@@ -72,7 +72,7 @@ export class RoomPage implements OnInit {
   userAuth: boolean = false; // Is user logged in ?
   userId: any;
   room: Room;
-  rooms: Room[] = [];
+  rooms: Observable <Room[]>;
   pictures: FileUpload[] = [];
   client: Client;
 
@@ -101,20 +101,18 @@ export class RoomPage implements OnInit {
       .pipe(take(1))
       .subscribe(rm =>{
         this.room = rm;
-        this.room_svc.getPropertyRooms(rm.property.address)
-        .pipe(take(2))
-        .subscribe(rooms =>{
-          console.log(rooms)
-          this.rooms = rooms;
-          console.log(this.rooms)
-          this.ionicComponentService.dismissLoading().catch(err => console.log(err))
-        })
+        this.rooms = this.room_svc.getPropertyRooms(rm.property.address)
+        this.ionicComponentService.dismissLoading().catch(err => console.log(err))
         this.room.pictures.forEach(p =>{
           this.pictures.push(p);
         });
+        this.room.property.shared_area_pics.forEach(p =>{
+          this.pictures.push(p);
+        })
         this.room.property.pictures.forEach(p =>{
           this.pictures.push(p);
         })
+        console.log(this.pictures);
         //this.ionicComponentService.dismissLoading().catch(err => console.log(err))
       })
     }

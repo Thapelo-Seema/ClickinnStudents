@@ -254,7 +254,7 @@
                 </ion-item>
 
                 <div class="detail-horizontal-scroll ion-margin-top ion-margin-bottom">
-                  <div class="img-gallery margin" tappable  *ngFor="let rec of rooms; let i = index" (click)="openDetail(rec?.room_id)">
+                  <div class="img-gallery margin" tappable  *ngFor="let rec of rooms | async ; let i = index" (click)="openDetail(rec?.room_id)">
                       <img src="{{rec?.display_pic_url}}"  />
                       <div class="main-b-header9">
                         <p class="ion-text-wrap"><ion-text color="grey">{{rec.rent | currency : 'R'}} | {{rec.room_type}}</ion-text></p>  

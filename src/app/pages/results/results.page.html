@@ -1,28 +1,29 @@
 <ion-header>
   <ion-toolbar color="thapsblue">
     <ion-buttons slot="start">
-      <ion-back-button auto-hide="false"></ion-back-button>
+      <ion-back-button defaultHref="#"></ion-back-button>
     </ion-buttons>
-    <ion-title tappable slot="start" class="main-header4" (click)="seeSearch()">RESULTS</ion-title>
+    <ion-title tappable class="main-header4 ion-no-padding" (click)="seeSearch()">
+      <h1 class="ion-text-center">RESULTS</h1>
+    </ion-title>
   </ion-toolbar>
   <ion-toolbar color="thapsblue">
-    <ion-grid fixed class="ion-no-padding">
-      <ion-searchbar color="" placeholder="{{rooms?.length}} rooms matched!"  search-icon="search-outline"  [disabled]="true">
-      </ion-searchbar>
-    </ion-grid>
+    <div class="ion-text-center ion-margin-top">
+      <ion-button  strong=true mode="ios" fill="clear" color="light" href="{{generateWhatsAppLink()}}">
+        <p class="ion-text-wrap"><ion-text color="light">Click Here To Submit Search To Clickinn WhatsApp</ion-text></p>
+        <ion-icon name="logo-whatsapp" color="light" slot="end"></ion-icon>
+        <ion-icon name="arrow-redo-outline" color="light" slot="end"></ion-icon>
+      </ion-button>
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div *ngIf="rooms.length == 0 && !show_search" class="ion-text-center ion-margin-top">
-    <ion-button  strong=true mode="ios" fill="outline" color="thapsblue" href="{{generateWhatsAppLink()}}">
-      <p class="ion-text-wrap"><ion-text color="thapsblue">Submit Search To Clickinn WhatsApp</ion-text></p>
-      <ion-icon name="logo-whatsapp" color="thapsblue" slot="start"></ion-icon>
-      <ion-icon name="arrow-redo-outline" color="thapsblue" slot="end"></ion-icon>
-    </ion-button>
-  </div>
+  <ion-grid fixed class="ion-no-padding ion-text-center">
+    <h4 class="ion-text-center">{{results}} Rooms Matched!</h4>
+  </ion-grid>
   
-  <div id="container" *ngIf="rooms.length == 0 && !show_search">
+  <div id="container" *ngIf="!show_search && results == 0">
     <strong class="capitalize">
       <ion-text color="lightgray">No Results</ion-text>
     </strong>
@@ -128,7 +129,7 @@
 
 
   <ion-grid *ngIf="!show_search" fixed class="ion-no-padding">
-    <ion-card tappable mode="ios"  *ngFor="let room of rooms" (click)="gotoRoom(room)">
+    <ion-card tappable mode="ios"  *ngFor="let room of rooms | async " (click)="gotoRoom(room)">
       
       <ion-slides pager>
         <ion-slide *ngFor="let image of  room.pictures">

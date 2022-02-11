@@ -129,8 +129,8 @@ export class MapsService {
       const pservice = new google.maps.places.PlacesService(document.createElement('div'));
       return new Promise<Address>((resolve, reject) =>{
           pservice.getDetails(request,(details, status) => { 
-            console.log("place details");
-            console.log(details);
+            //console.log("place details");
+            //console.log(details);
             this.transformPlaceToAddress(details, status)
             .then(location =>{
               resolve(location);
