@@ -255,6 +255,14 @@ export class RoomPage implements OnInit {
     return encodeURI(msg);
   }
 
+  urlEncodedSecuredRoomMessge(): string{
+    let msg: string = `Hi my name is ${this.client.firstname}, I have secured the ${this.room.room_type} at 
+    ${this.room.property.address.place_name}.\n`;
+    msg += "Room price: " + this.room.accredited ? "NSFAS RATE.\n" : "R" + this.room.rent + "\n"; 
+    msg += "https://clickinn.co.za/room;room_id=" + this.room.room_id;
+    return encodeURI(msg);
+  }
+
   /* sendMail(search: Search){
     let msg: string = `Hi my name is ${this.user.firstname}, I am responding to your search on Clickinn.\n`;
     if(search.apartment_type == 'Any'){
@@ -297,6 +305,11 @@ export class RoomPage implements OnInit {
   share(){
     let msg: string = this.urlEncodedShareMessge();
     return `https://wa.me/?text=${msg}`;
+  }
+
+  secured(){
+    let msg: string = this.urlEncodedSecuredRoomMessge();
+    return `https://wa.me/+27671093186?text=${msg}`;
   }
 
   /* whatsAppNumberStatus(search: Search){
