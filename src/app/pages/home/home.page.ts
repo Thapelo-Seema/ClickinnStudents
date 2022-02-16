@@ -4,9 +4,6 @@ import { MenuController, ModalController} from '@ionic/angular';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { RoomService } from '../../services/room.service';
-import { AccommodationSearchPage } from '../accommodation-search/accommodation-search.page';
-import { BannerDetailsPage } from '../../pages/banner-details/banner-details.page';
-import { RolesPage } from '../roles/roles.page';
 import { IonicComponentService } from '../../services/ionic-component.service';
 import { UsersService } from '../../object-init/users.service';
 import { SearchFeedService } from '../../services/search-feed.service';
@@ -316,39 +313,18 @@ toggleSideMenu() {
 }
 
 //Open accommodation search modal
-async openSearchModal(client_id) {
-  console.log(client_id);
-  console.log("open modal");
-  const modal = await this.modalController.create({
-    component: AccommodationSearchPage,
-    cssClass: "small-modal",
-    componentProps: {
-      uid: client_id
-    },
-    showBackdrop: true
-  });
-  return await modal.present();
+openSearchModal(client_id) {
+  this.router.navigate(['/accommodation-search', {'uid': client_id}]);
 }
 
+
+
 async openSpecialModal(id) {
-  const modal = await this.modalController.create({
-    component: BannerDetailsPage,
-    componentProps: {
-      specialId: id
-    }
-  });
-  return await modal.present();
+  this.router.navigate(['/banner-details', {'specialId': id}]);
 }
 
 async openRoleModal(_role) {
-  const modal = await this.modalController.create({
-    component: RolesPage,
-    componentProps: {
-      role: _role,
-      uid: this.user.uid
-    }
-  });
-  return await modal.present();
+  this.router.navigate(['/roles', {'role': _role, 'uid': this.user.uid}]);
 }
 
 openDetail(accommodationId) {

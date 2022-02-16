@@ -1,9 +1,12 @@
+<ion-header>
+  <ion-toolbar color="thapsblue">
+    <ion-buttons slot="start">
+      <ion-back-button mode="md" color="light" defaultHref="#"  ></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{(bannerDetail | async)?.title}}</ion-title>
+  </ion-toolbar>
+</ion-header>
 <ion-content fullscreen="true">
-  <ion-fab vertical="top" horizontal="end" slot="fixed">
-    <ion-fab-button mode="ios" size="small" color="thapsblue" translucent="true" (click)="close()">
-      <ion-icon name="close-circle-outline" color="lightgray"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
   <!--*********** Image header  ***********-->
   <div class="detail-header" [ngStyle]="{'background-image': 'url(' + (bannerDetail | async)?.pic + ')'}">
   </div>

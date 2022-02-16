@@ -53,6 +53,19 @@ export class RolesPage implements OnInit {
     await this.modal_controller.dismiss();
   }
 
+  urlEncodedMessge(): string{
+    let msg: string = `Hi my name is ${this.partnership.firstname} ${this.partnership.lastname}, I am a ${this.partnership.role} at 
+    ${this.partnership.company} and I would like to do business with Clickinn.\n`;
+    return encodeURI(msg);
+  }
+
+  //Send a follow up
+  generateWhatsAppLink(): string{
+    //Composing message
+    let msg: string = this.urlEncodedMessge();
+    return `https://wa.me/+27671093186?text=${msg}`;
+  }
+
   submit(){
     this.err_message = "";
     if(this.partnership.firstname == "" || this.partnership.firstname.length < 2){

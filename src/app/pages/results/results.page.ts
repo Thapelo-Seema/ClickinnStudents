@@ -20,6 +20,7 @@ export class ResultsPage implements OnInit {
   results: number = 0;
   i = 0;
   show_search: boolean = false;
+  show_results: boolean = true;
   constructor(
     private ionic_component_svc: IonicComponentService,
     private activated_route: ActivatedRoute, 
@@ -45,8 +46,8 @@ export class ResultsPage implements OnInit {
           this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
           this.rooms  = this.searchfeed_svc.getPlacesForCampus(sch).pipe(tap(_rooms =>{
             this.results = _rooms.length;
+            if(this.results == 0) this.show_results = false;
           }))
-          
         }
       })
     }
@@ -74,12 +75,14 @@ export class ResultsPage implements OnInit {
     this.i++
     if(this.i > 10){
       this.show_search = true;
+      this.show_results = false;
     }
   }
 
   close(){
     this.i = 0;
     this.show_search = false;
+    if(this.results > 0) this.show_results = true;
   }
 
 }

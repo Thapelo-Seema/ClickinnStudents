@@ -4,7 +4,7 @@
       <ion-back-button defaultHref="#"></ion-back-button>
     </ion-buttons>
     <ion-title tappable class="main-header4 ion-no-padding" (click)="seeSearch()">
-      <h1 class="ion-text-center">RESULTS</h1>
+      <h1 class="ion-text-center">{{results}} RESULTS</h1>
     </ion-title>
   </ion-toolbar>
   <ion-toolbar color="thapsblue">
@@ -18,12 +18,9 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-grid fixed class="ion-no-padding ion-text-center">
-    <h4 class="ion-text-center">{{results}} Rooms Matched!</h4>
-  </ion-grid>
+<ion-content overflow-scroll="true">
   
-  <div id="container" *ngIf="!show_search && results == 0">
+  <div id="container" *ngIf="!show_search && results == 0 && !show_results">
     <strong class="capitalize">
       <ion-text color="lightgray">No Results</ion-text>
     </strong>
@@ -41,7 +38,7 @@
 
 
 
-  <ion-grid *ngIf="show_search" fixed class="ion-no-padding">
+  <ion-grid *ngIf="show_search && !show_results" fixed class="ion-no-padding">
     <div id="profile1-info" class="test-class" padding>
       <h3 id="profile1-name">{{search.searcher?.firstname}} {{search.searcher?.lastname}}</h3>
     </div>
@@ -128,7 +125,7 @@
 
 
 
-  <ion-grid *ngIf="!show_search" fixed class="ion-no-padding">
+  <ion-grid *ngIf="!show_search && show_results" fixed class="ion-no-padding">
     <ion-card tappable mode="ios"  *ngFor="let room of rooms | async " (click)="gotoRoom(room)">
       
       <ion-slides pager>
