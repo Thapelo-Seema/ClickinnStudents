@@ -95,6 +95,7 @@ export class RoomPage implements OnInit {
   }
 
   ionViewWillEnter(){
+    console.log("Ion view will enter...")
     if(this.activatedRoute.snapshot.paramMap.get("room_id")){
       this.ionicComponentService.presentLoading()
       this.room_svc.getRoom(this.activatedRoute.snapshot.paramMap.get('room_id'))
@@ -103,6 +104,7 @@ export class RoomPage implements OnInit {
         this.room = rm;
         this.rooms = this.room_svc.getPropertyRooms(rm.property.address)
         this.ionicComponentService.dismissLoading().catch(err => console.log(err))
+
         this.room.pictures.forEach(p =>{
           this.pictures.push(p);
         });
@@ -112,7 +114,6 @@ export class RoomPage implements OnInit {
         this.room.property.pictures.forEach(p =>{
           this.pictures.push(p);
         })
-        console.log(this.pictures);
         //this.ionicComponentService.dismissLoading().catch(err => console.log(err))
       })
     }
@@ -160,7 +161,6 @@ export class RoomPage implements OnInit {
   }
 
   chat(){
-    
     this.router.navigate(['/chat', {'rooms': [this.room.room_id], 'source': 'room',
     'agent_id': this.room.property.uploader_id, 'client_id':  this.client_id}]);
   }
@@ -263,38 +263,6 @@ export class RoomPage implements OnInit {
     return encodeURI(msg);
   }
 
-  /* sendMail(search: Search){
-    let msg: string = `Hi my name is ${this.user.firstname}, I am responding to your search on Clickinn.\n`;
-    if(search.apartment_type == 'Any'){
-        msg += `I'd like to enquire if you're still looking for any room type 
-        around ${this.returnFirst(search.Address.description)}. If you are still looking please contact me on ${this.user.phoneNumber} or email me on ${this.user.email}`
-    }else{
-        msg += `I'd like to enquire if you're still looking for
-         a ${search.apartment_type} around ${this.returnFirst(search.Address.description)}`
-    }
-    this.searchfeed_svc.sendMail(search, this.user.firstname, msg)
-    .subscribe(res =>{
-      console.log(res)
-    }, err =>{
-      console.log(err);
-    })
-  } */
-
-  /* formatContactNumber(search: Search): string{
-    let newNumber = search.searcher_contact ? search.searcher_contact: "";
-    if(search.searcher_contact != undefined){
-      if(search.searcher_contact.substring(0, 1) == "0"){
-          newNumber = "+27" + search.searcher_contact.substring(1);
-        }else if(search.searcher_contact.substring(0, 1) == "+"){
-          newNumber = search.searcher_contact;
-        }
-        else if(search.searcher_contact.substring(0, 1) == "27"){
-          newNumber = "+" + search.searcher_contact;
-        }
-    }
-    return newNumber;
-  } */
-
   //Send a follow up
   generateWhatsAppLink(): string{
     //Composing message
@@ -311,19 +279,5 @@ export class RoomPage implements OnInit {
     let msg: string = this.urlEncodedSecuredRoomMessge();
     return `https://wa.me/+27671093186?text=${msg}`;
   }
-
-  /* whatsAppNumberStatus(search: Search){
-    if(search.searcher_contact != null && search.searcher_contact != ""  
-      && search.contact_on_WhatsApp && search.searcher_contact != undefined){
-
-    }else{
-      let toast = this.toastCtrl.create({
-        duration: 3000,
-        message: "No WhatsApp number provided, sending email..."
-      })
-      toast.present();
-      this.sendMail(search);
-    }
-  } */
 
 }

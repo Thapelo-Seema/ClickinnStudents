@@ -50,8 +50,12 @@ export class AppointmentPage implements OnInit {
     private ionic_component_svc: IonicComponentService) { }
 
   ngOnInit(){
+      
+  }
+
+  ionViewWillEnter(){
     if(!this.activated_route.snapshot.paramMap.get('appointment_id')){
-      console.log("running appointment from room...")
+      
       this.getRooms()
       this.getAgent()
       //this.getClient()
@@ -59,6 +63,7 @@ export class AppointmentPage implements OnInit {
       console.log("running appointment...")
       this.ionic_component_svc.presentLoading();
       this.appointment_svc.getAppointment(this.activated_route.snapshot.paramMap.get('appointment_id'))
+      .pipe(take(1))
       .subscribe(appt =>{
         this.appointment = this.appointment_svc.copyAppointment(appt);
         this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
@@ -67,7 +72,7 @@ export class AppointmentPage implements OnInit {
         console.log(err);
         this.ionic_component_svc.dismissLoading().catch(err => console.log(err));
       })
-    }  
+    }
   }
 
   getAgent(){
