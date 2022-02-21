@@ -9,14 +9,14 @@
         {{user.firstname}}
       </ion-label>
     </ion-chip>
-    <ion-chip tappable (click)="gotoSearch(search)" *ngIf="search?.room_type != '' && search?.institution_and_campus != ''">
+    <!-- <ion-chip tappable (click)="gotoSearch(search)" *ngIf="search?.room_type != '' && search?.institution_and_campus != ''">
       <ion-avatar>
         <ion-icon name="search-outline" color="success"></ion-icon>
       </ion-avatar>
       <ion-label color="success">
         Active Search
       </ion-label>
-    </ion-chip>
+    </ion-chip> -->
   </ion-toolbar>
   <!-- <ion-toolbar color="thapsblue"> 
     <ion-row>
@@ -112,7 +112,7 @@
       <ion-slides class="swiper-container" pager= false [options]="slideOption" #slidesTwo mode="ios">
         <ion-slide tappable  *ngFor="let rec of recommended | async ; let i = index" (click)="openDetail(rec?.room_id)"> 
           <ion-card class="shop-main-h-card shop-card-tall   slide-right">
-            <div *ngIf="rec.property.accredited" class="ribbon">NSFAS</div>
+            <div *ngIf="rec.accredited" class="ribbon">NSFAS</div>
             <div class="shop-div-tall-bg"> 
               <img src="{{rec?.display_pic_url}}" height="100%" width="100%">
             </div>

@@ -127,12 +127,7 @@
 
   <ion-grid *ngIf="!show_search && show_results" fixed class="ion-no-padding">
     <ion-card tappable mode="ios"  *ngFor="let room of rooms | async " (click)="gotoRoom(room)">
-      
-      <ion-slides pager>
-        <ion-slide *ngFor="let image of  room.pictures">
-          <img src="{{image.url}}" width="100%" height="100%">
-        </ion-slide>
-      </ion-slides>
+      <img src="{{room.display_pic_url}}" width="100%" height="100%">
       <ion-card-content>
         <ion-item class="ion-no-padding" lines="none">
           <ion-label>

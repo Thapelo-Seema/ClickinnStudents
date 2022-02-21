@@ -7,6 +7,8 @@ import { Room } from '../models/room.model';
 //import { RoomCount } from '../models/room.count.interface';
 import { FileUpload } from '../models/file-upload.model';
 import { RoomCount } from '../models/room-count.model';
+import { RoomPreview } from '../models/room-preview.model';
+import { PropertyPreview } from '../models/property-preview.model';
 
 
 @Injectable({
@@ -91,6 +93,40 @@ export class PropertiesService {
 		time_uploaded: 0
   	}
   	return room;
+  }
+
+  defaultRoomPreview(){
+	  let room_prev: RoomPreview ={
+		available: false,
+		accredited: false,
+		display_pic_url: "",
+		dp_loaded: false,
+		room_id: "",
+		furnished: false,
+		room_type: "",   
+		rent: null,
+		property: this.defaultPropertyPreview(),
+		time_modified: 0,
+		time_uploaded: 0
+	  }
+	  return room_prev;
+  }
+
+  initRoomPreview(_room: Room){
+	let room: RoomPreview = {
+		accredited: _room.accredited || false,
+		available: _room.available || false,
+		display_pic_url: _room.display_pic_url || _room.pictures[0].url,
+		dp_loaded: _room.dp_loaded || false,
+		room_id: _room.room_id || "",
+		furnished: _room.furnished || false,
+		room_type: _room.room_type || "",   
+		rent: _room.rent || null,
+		property: this.initializePropertyPreview(_room.property) || this.defaultPropertyPreview(),
+		time_modified: _room.time_modified || 0,
+		time_uploaded: _room.time_uploaded || 0
+	}
+	return room;
   }
 
   copyRoom(_room: Room){
@@ -186,6 +222,32 @@ export class PropertiesService {
 		rooms: this.defaultRoomCount()
   	}
   	return property;
+  }
+
+  defaultPropertyPreview(){
+	let property: PropertyPreview = {
+		address: this.defaultAddress(),
+		landlord_id: "",
+		property_id: "",
+		display_pic_url: "",
+		dp_loaded: false,
+		uploader_id: "",
+		parking: false
+	}
+	return property;
+  }
+
+  initializePropertyPreview(_property: Property){
+	let property: PropertyPreview = {
+		address: _property.address || this.defaultAddress(),
+		landlord_id: _property.landlord_id || "",
+		property_id: _property.property_id || "",
+		display_pic_url: _property.display_pic_url || "",
+		dp_loaded: _property.dp_loaded,
+		uploader_id: _property.uploader_id || "",
+		parking: _property.parking || false
+	}
+	return property;
   }
 
   defaultFileUpload(){

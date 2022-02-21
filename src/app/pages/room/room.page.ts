@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component} from '@angular/core';
 import { ActivatedRoute , Router} from '@angular/router';
 import { ModalController} from '@ionic/angular';
 import { UserService } from '../../services/user.service';
@@ -9,42 +9,20 @@ import { RoomService } from '../../services/room.service';
 import { Room } from 'src/app/models/room.model';
 import { FileUpload } from 'src/app/models/file-upload.model';
 import { PropertiesService } from '../../object-init/properties.service';
-import { ImageGalleryViewPage } from '../image-gallery-view/image-gallery-view.page';
 import { Client } from 'src/app/models/client.model';
 import { UsersService } from '../../object-init/users.service';
-import { RoomSearch } from 'src/app/models/room-search.model';
+//import { RoomSearch } from 'src/app/models/room-search.model';
 
 @Component({
   selector: 'app-room',
   templateUrl: './room.page.html',
   styleUrls: ['./room.page.scss'],
 })
-export class RoomPage implements OnInit {
+export class RoomPage {
 
-  slideOption = {
-    slidesPerView: 'auto',
-    grabCursor: true
-  };
-
-  //Slider configuration 
-  slideOptsOne = {
-    initialSlide: 0,
-    //slidesPerView: 1,
-    slidesPerView: 1,
-    spaceBetween: 30,
-    freeMode: true,
-    //autoplay: true
-  };
-
-
-  parentPath:any;
+  //parentPath:any;
   uploader_pic_loaded: boolean = false;
   client_id: string = '';
-
-  //****** image slide  *******/
-  sliderOpts = {
-    slidesPerView: 2.5
-  };
 
   //**** toolbar for hide and show ****/
   showToolbar = false;
@@ -60,13 +38,13 @@ export class RoomPage implements OnInit {
   recommenedItems: Observable<any[]>;
   itemDetail: Observable<any>;
   //relatedPlaces:Observable<any[]>;
-  agentDetail: Observable<any>;
-  relatedPlacesArray: any=[];
-  reviews: Observable<any[]>;
+  //agentDetail: Observable<any>;
+  //relatedPlacesArray: any=[];
+  //reviews: Observable<any[]>;
 
-  itemId: any;
-  categoryId: any;
-  itemArray: any=[]; // <------- itemArray: any=[]; 
+  //itemId: any;
+  //categoryId: any;
+  //itemArray: any=[]; // <------- itemArray: any=[]; 
 
   //**** User authentication  ****/
   userAuth: boolean = false; // Is user logged in ?
@@ -90,12 +68,7 @@ export class RoomPage implements OnInit {
     this.client = this.user_init_svc.defaultClient();
   }
 
-  ngOnInit() {
-    
-  }
-
   ionViewWillEnter(){
-    console.log("Ion view will enter...")
     if(this.activatedRoute.snapshot.paramMap.get("room_id")){
       this.ionicComponentService.presentLoading()
       this.room_svc.getRoom(this.activatedRoute.snapshot.paramMap.get('room_id'))
@@ -114,9 +87,9 @@ export class RoomPage implements OnInit {
         this.room.property.pictures.forEach(p =>{
           this.pictures.push(p);
         })
-        //this.ionicComponentService.dismissLoading().catch(err => console.log(err))
       })
     }
+
     if(this.activatedRoute.snapshot.paramMap.get("client_id")){
       this.client_id = this.activatedRoute.snapshot.paramMap.get("client_id");
       this.userService.getClient(this.client_id)
@@ -125,10 +98,6 @@ export class RoomPage implements OnInit {
         this.client = this.user_init_svc.copyClient(clt);
       })
     }
-  }
-
-  ngOnDestroy() {
-		//this.sub.unsubscribe()
   }
 
   updateDisplayPicLoaded(){
@@ -140,7 +109,7 @@ export class RoomPage implements OnInit {
     this.router.navigate(['/room', {'room_id': accommodationId, 'client_id': this.client.uid}]);
   }
 
-  openPic(pic){
+  /* openPic(pic){
     console.log("openImageViewer")
     // let modal = this.modalCtrl.create(CartPage, { data: this.cart });
    this.modalController.create({
@@ -153,19 +122,19 @@ export class RoomPage implements OnInit {
    }).then(modal => {
      modal.present();
    });
-  }
+  } */
 
   gotoAppointment(){
     this.router.navigate(['/appointment', {'rooms': [this.room.room_id], 
     'agent_id': this.room.property.uploader_id, 'client_id':  this.client_id}]);
   }
 
-  chat(){
+ /*  chat(){
     this.router.navigate(['/chat', {'rooms': [this.room.room_id], 'source': 'room',
     'agent_id': this.room.property.uploader_id, 'client_id':  this.client_id}]);
-  }
+  } */
 
-  async getPlaceDetail(){
+  /* async getPlaceDetail(){
 
     //this.itemDetail =  await this.realestateService.getHouseDetail( this.itemId);
 
@@ -195,7 +164,7 @@ export class RoomPage implements OnInit {
     });
 
 
-  }
+  } */
 
   toggleHeart() {
 		if(this.heartType == 'heart-empty') {
@@ -211,9 +180,9 @@ export class RoomPage implements OnInit {
 		}
 	}
 
-  updateRoomDisplayPicLoaded(){
+ /*  updateRoomDisplayPicLoaded(){
     this.room.dp_loaded = true;
-  }
+  } */
 
   onScroll($event) {
     if ($event && $event.detail && $event.detail.scrollTop) {
@@ -227,9 +196,10 @@ export class RoomPage implements OnInit {
       this.transition = false;
     }
   }
-  contactAction(action: string){
+
+  /* contactAction(action: string){
     this.ionicComponentService.presentToast(action,3000);
-  }
+  } */
 
   /* async openMap() {
     console.log("openModal");

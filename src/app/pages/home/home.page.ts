@@ -1,20 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MenuController, ModalController} from '@ionic/angular';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { RoomService } from '../../services/room.service';
 import { IonicComponentService } from '../../services/ionic-component.service';
 import { UsersService } from '../../object-init/users.service';
+import { PropertiesService } from '../../object-init/properties.service';
 import { SearchFeedService } from '../../services/search-feed.service';
-import {take} from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { Client } from 'src/app/models/client.model';
 import { IonicStorageService } from '../../services/ionic-storage.service';
 import { RoomSearch } from 'src/app/models/room-search.model';
-import { Room } from 'src/app/models/room.model';
-import { AngularFireMessaging } from '@angular/fire/compat/messaging';
+//import { Room } from 'src/app/models/room.model';
+//import { AngularFireMessaging } from '@angular/fire/compat/messaging';
 import { MapsService } from '../../services/maps.service';
 import { Observable } from 'rxjs';
+import { RoomPreview } from 'src/app/models/room-preview.model';
 
 @Component({
   selector: 'app-home',
@@ -53,13 +54,13 @@ export class HomePage {
 
   //********* Observable *********/
   //categories: Observable<any[]>; //the different roles on the platform 
-  recommended: Observable<Room[]>;  //recommended properties (reses/accommmodations/places)
+  recommended: Observable<RoomPreview[]>;  //recommended properties (reses/accommmodations/places)
   banners: Observable<any[]>;  //informational banners at the top
 
   //*******Own varibales */
   present_search: boolean = false;
   user: Client;
-  search: RoomSearch;
+  //search: RoomSearch;
   area_search: RoomSearch;
   client_subs: any;
   search_subs: any;
@@ -67,25 +68,19 @@ export class HomePage {
   constructor(
     public room_svc: RoomService,
     private activated_route: ActivatedRoute,
-    private af_messaging: AngularFireMessaging,
-    public menuCtrl: MenuController,
+    private properties_svc: PropertiesService,
     private user_svc: UserService,
     private user_init_svc: UsersService,
     public router: Router,
     private ionic_component_svc: IonicComponentService,
-    private modalController: ModalController,
     private authService: AuthService,
     private searchfeed_svc: SearchFeedService,
     private maps_svc: MapsService,
     private storage_svc: IonicStorageService
   ) {
     this.user = this.user_init_svc.defaultClient();
-    this.search = this.searchfeed_svc.defaultSearch();
+    //this.search = this.searchfeed_svc.defaultSearch();
     this.area_search = this.searchfeed_svc.defaultSearch();
-  }
-
-  ngOnInit() {
-    //Get authenticated user, if none, create one
   }
 
   ionViewWillEnter(){
@@ -103,6 +98,15 @@ export class HomePage {
         this.signUpAnonymously();
       }
     })
+  }
+
+  ngOnDestroy(){
+    if(this.client_subs){
+      this.client_subs.unsubscribe();
+    }
+    if(this.search_subs){
+      this.search_subs.unsubscribe();
+    }
   }
 
   createAreaSearch(institution_and_campus: string){
@@ -123,7 +127,7 @@ export class HomePage {
           .then(() =>{
             this.ionic_component_svc.dismissLoading();
             this.router.navigate(['/results', {search_id: this.area_search.id, 
-              client_id: this.search.searcher.uid, campus_search: institution_and_campus}])
+              client_id: this.area_search.searcher.uid, campus_search: institution_and_campus}])
           })
           .catch(err =>{
             this.ionic_component_svc.dismissLoading();
@@ -179,7 +183,7 @@ export class HomePage {
     })
   }
 
-  updateUserFCM(){
+  /* updateUserFCM(){
     this.af_messaging.requestToken.pipe(take(1))
     .subscribe(token =>{
       if(token){
@@ -193,7 +197,7 @@ export class HomePage {
     err =>{
       console.log(err);
     })
-  }
+  } */
 
   updateDisplayPicLoaded(){
     this.user.dp_loaded = true;
@@ -218,7 +222,9 @@ export class HomePage {
             this.user = this.user_init_svc.copyClient(u);
             //this.updateUserFCM()
             this.saveUserType(); //If no user type was saved, save it
-            if(this.user.current_job != ""){
+            this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+            this.navigateToRoomFromLink();
+            /* if(this.user.current_job != ""){
               this.searchfeed_svc.getSearch(this.user.current_job)
               .pipe(take(1))
               .subscribe(sch =>{
@@ -239,7 +245,7 @@ export class HomePage {
               this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
               //if someone is coming from a link to see a room>>>> navigate to room
               this.navigateToRoomFromLink()
-            }
+            } */
           }else{
             this.user.user_type = "client";
             //console.log("Cached client was not persited on db...persisting: ", this.user)
@@ -277,70 +283,72 @@ export class HomePage {
     })
   }
 
-navigateToRoomFromLink(){
-  if(this.activated_route.snapshot.paramMap.get('room_id')){
-    let room_id = this.activated_route.snapshot.paramMap.get('room_id');
-    this.router.navigate(['/room', {'room_id': room_id, 'client_id': this.user.uid}])
+  navigateToRoomFromLink(){
+    if(this.activated_route.snapshot.paramMap.get('room_id')){
+      let room_id = this.activated_route.snapshot.paramMap.get('room_id');
+      this.router.navigate(['/room', {'room_id': room_id, 'client_id': this.user.uid}])
+    }
   }
-}
 
-saveUserType(){
-  this.storage_svc.getUserType()
-  .then(val =>{
-    if(!val) this.storage_svc.setUserType()
-  })
-  .catch(err => console.log(err))
-}
-
-//Get banners and recently modified places
-getHomePageResources(){
-  this.banners = this.room_svc.getBanners();
-  this.recommended = this.room_svc.getRecentlyModified();
-}
-
-gotoSearch(sch: RoomSearch){
-  if( sch.agent && sch.agent.contacts.indexOf(this.user.uid) != -1){
-    let index = sch.agent.contacts.indexOf(this.user.uid);
-    let thread_id = sch.agent.thread_ids[index];
-    this.router.navigate(['/chat', {'thread_id': thread_id, 'search_id': sch.id}])
-  }else{
-    this.router.navigate(['/agent-scanning', {'search_id': sch.id}])
+  saveUserType(){
+    this.storage_svc.getUserType()
+    .then(val =>{
+      if(!val) this.storage_svc.setUserType()
+    })
+    .catch(err => console.log(err))
   }
-}
 
-toggleSideMenu() {
-  this.menuCtrl.toggle(); //Add this method to your button click function
-}
+  //Get banners and recently modified places
+  getHomePageResources(){
+    this.banners = this.room_svc.getBanners();
+    this.recommended = this.room_svc.getRecentlyModified();
+  }
 
-//Open accommodation search modal
-openSearchModal(client_id) {
-  this.router.navigate(['/accommodation-search', {'uid': client_id}]);
-}
+  /* gotoSearch(sch: RoomSearch){
+    if( sch.agent && sch.agent.contacts.indexOf(this.user.uid) != -1){
+      let index = sch.agent.contacts.indexOf(this.user.uid);
+      let thread_id = sch.agent.thread_ids[index];
+      this.router.navigate(['/chat', {'thread_id': thread_id, 'search_id': sch.id}])
+    }else{
+      this.router.navigate(['/agent-scanning', {'search_id': sch.id}])
+    }
+  } */
 
+  //Open accommodation search modal
+  openSearchModal(client_id) {
+    this.ionic_component_svc.presentLoading();
+    this.router.navigate(['/accommodation-search', {'uid': client_id}])
+    this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+  }
 
+  async openSpecialModal(id) {
+    //this.ionic_component_svc.presentLoading();
+    this.router.navigate(['/banner-details', {'specialId': id}])
+    //this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+  }
 
-async openSpecialModal(id) {
-  this.router.navigate(['/banner-details', {'specialId': id}]);
-}
+  async openRoleModal(_role) {
+    this.ionic_component_svc.presentLoading();
+    this.router.navigate(['/roles', {'role': _role, 'uid': this.user.uid}])
+    this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+  }
 
-async openRoleModal(_role) {
-  this.router.navigate(['/roles', {'role': _role, 'uid': this.user.uid}]);
-}
+  openDetail(accommodationId) {
+    //this.ionic_component_svc.presentLoading();
+    this.router.navigate(['/room', {'room_id': accommodationId, 'client_id': this.user.uid}])
+    //this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+  }
 
-openDetail(accommodationId) {
-  this.router.navigate(['/room', {'room_id': accommodationId, 'client_id': this.user.uid}]);
-}
+  /* gotoSignin(){
+    this.router.navigateByUrl('/signin');
+  }
 
-gotoSignin(){
-  this.router.navigateByUrl('/signin');
-}
+  gotoAppointments(){
+    this.router.navigate(['/appointments', {'client_id': this.user.uid}])
+  }
 
-gotoAppointments(){
-  this.router.navigate(['/appointments', {'client_id': this.user.uid}])
-}
-
-gotoChats(){
-  this.router.navigate(['/chats', {'client_id': this.user.uid}])
-}
+  gotoChats(){
+    this.router.navigate(['/chats', {'client_id': this.user.uid}])
+  } */
 
 }

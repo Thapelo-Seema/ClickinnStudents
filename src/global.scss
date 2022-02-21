@@ -29,6 +29,14 @@
 
 //@import '~swiper/swiper-bundle';
 
+//flex center
+.flex-center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
 //*************************************//
 //******** Horizontal scroll ***********//
 //*************************************//

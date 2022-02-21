@@ -72,13 +72,6 @@
             </p>
         </div>
     
-                <!--*********** Image gallery ***********-->
-        <!-- <div class="detail-horizontal-scroll ion-margin-top ion-margin-bottom">
-            <div class="img-gallery margin" *ngFor="let pic of pictures; let i = index" (click)="openPic(i)">
-                <img src="{{pic.url}}" />
-            </div>
-        </div> -->
-    
       </ion-col>
       <ion-col size-lg="4" size-md="12" size-sm="12" size="12">
                 <!--*********** Contact  ***********-->
@@ -297,7 +290,7 @@
                 <ion-item lines="none" *ngIf="room.property.uploader_pic">
                   <h1 class="main-header5">Contact agent</h1>
                 </ion-item>
-                <ion-item lines="none" style="padding: 0px !important;" *ngIf="room.property.uploader_pic">
+                <ion-item button href="{{generateWhatsAppLink()}}" lines="none" style="padding: 0px !important;" *ngIf="room.property.uploader_pic">
                   <ion-avatar slot="start">
                     <img src="{{room.property.uploader_pic}}" (load)="updateDisplayPicLoaded()" [hidden]="!uploader_pic_loaded">
                     <img src="../../../assets/imgs/plain-gray-background.jpeg" [hidden]="uploader_pic_loaded">

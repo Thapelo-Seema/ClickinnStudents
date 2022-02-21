@@ -7,6 +7,8 @@ import { RoomSearch } from '../models/room-search.model';
 import { BannerItem } from '../models/banner-item.model';
 import { Property } from '../models/property.model';
 import { Address } from '../models/address.model';
+import { RoomPreview } from '../models/room-preview.model';
+import { PropertyPreview } from '../models/property-preview.model';
 //import { SearchFeedService } from './search-feed.service';
 
 @Injectable({
@@ -174,14 +176,14 @@ export class RoomService {
   }
 
   getRecentlyModified(){
-    return this.afs.collection<Room>('Rooms', ref =>
+    return this.afs.collection<RoomPreview>('RoomPreviews', ref =>
     ref.where("available", "==", true).orderBy('time_uploaded', 'desc')
     .limit(30))
     .valueChanges();
   }
 
   getRecentlyUpdated(){
-    return this.afs.collection<Room>('Rooms', ref =>
+    return this.afs.collection<RoomPreview>('RoomPreviews', ref =>
     ref.where("available", "==", true).orderBy('time_uploaded', 'desc')
     .limit(30))
     .valueChanges();
@@ -190,6 +192,32 @@ export class RoomService {
   getRecommendedProperties(){
     return this.afs.collection<Property>('Propertys')
     .valueChanges();
+  }
+
+  getAllProperties(){
+    return this.afs.collection<Property>('Propertys')
+    .valueChanges();
+  }
+
+  getAllRooms(){
+    return this.afs.collection<Room>('Rooms')
+    .valueChanges();
+  }
+
+  createRoomPreview(room: RoomPreview){
+    return this.afs.collection<RoomPreview>('RoomPreviews').doc(room.room_id).set(room);
+  }
+
+  createPropertyPreview(property: PropertyPreview){
+    return this.afs.collection<PropertyPreview>('PropertyPreviews').doc(property.property_id).set(property);
+  }
+
+  updateRoomPreview(room: RoomPreview){
+    return this.afs.collection<RoomPreview>('RoomPreviews').doc(room.room_id).update(room);
+  }
+
+  updatePropertyPreview(property: PropertyPreview){
+    return this.afs.collection<PropertyPreview>('PropertyPreviews').doc(property.property_id).update(property);
   }
   
 }
