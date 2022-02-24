@@ -17,6 +17,7 @@ import { environment } from 'src/environments/environment';
 import { IonicStorageModule } from '@ionic/storage-angular';
 //import { ServiceWorkerModule } from '@angular/service-worker';
 import { AngularFireMessagingModule } from '@angular/fire/compat/messaging';
+//import { SplashScreenComponent } from './splash/splash-screen/splash-screen.component';
 
 
 @NgModule({

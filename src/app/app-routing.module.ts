@@ -47,7 +47,7 @@ const routes: Routes = [
     path: 'profile',
     data: {preload: true, loadAfter: 60000},
     loadChildren: () => import('./pages/profile/profile.module').then( m => m.ProfilePageModule)
-  },
+  }
 ];
 
 @NgModule({

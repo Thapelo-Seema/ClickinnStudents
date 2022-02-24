@@ -1,4 +1,20 @@
 <ion-app>
-  <!-- <app-splash-screen></app-splash-screen> -->
-  <ion-router-outlet></ion-router-outlet>
+  <div class="flex-center loading-canvas" *ngIf="show_loading">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <div class="ion-text-center"> 
+            <img src="../../../assets/icon/logo.png" width="150px" height="150px">
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-spinner class="center-content" name="crescent" color="thapsblue"></ion-spinner>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <ion-router-outlet>
+  </ion-router-outlet>
 </ion-app>
