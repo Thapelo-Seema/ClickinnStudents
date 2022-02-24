@@ -5,11 +5,11 @@ import { AuthService } from '../../services/auth.service';
 import { RoomService } from '../../services/room.service';
 import { IonicComponentService } from '../../services/ionic-component.service';
 import { UsersService } from '../../object-init/users.service';
-import { PropertiesService } from '../../object-init/properties.service';
+//import { PropertiesService } from '../../object-init/properties.service';
 import { SearchFeedService } from '../../services/search-feed.service';
 import { take } from 'rxjs/operators';
 import { Client } from 'src/app/models/client.model';
-import { IonicStorageService } from '../../services/ionic-storage.service';
+//import { IonicStorageService } from '../../services/ionic-storage.service';
 import { RoomSearch } from 'src/app/models/room-search.model';
 //import { Room } from 'src/app/models/room.model';
 //import { AngularFireMessaging } from '@angular/fire/compat/messaging';
@@ -68,7 +68,7 @@ export class HomePage {
   constructor(
     public room_svc: RoomService,
     private activated_route: ActivatedRoute,
-    private properties_svc: PropertiesService,
+    //private properties_svc: PropertiesService,
     private user_svc: UserService,
     private user_init_svc: UsersService,
     public router: Router,
@@ -76,7 +76,7 @@ export class HomePage {
     private authService: AuthService,
     private searchfeed_svc: SearchFeedService,
     private maps_svc: MapsService,
-    private storage_svc: IonicStorageService
+    //private storage_svc: IonicStorageService
   ) {
     this.user = this.user_init_svc.defaultClient();
     //this.search = this.searchfeed_svc.defaultSearch();
@@ -88,14 +88,19 @@ export class HomePage {
     this.authService.getAuthenticatedUser()
     .pipe(take(1))
     .subscribe(usr =>{
+      console.log(usr)
       if(usr && usr.uid){
+        console.log("user authenticated...");
         //This will run if we have an authenticated user
-        this.getHomePageResources();
         this.user.uid = usr.uid;
+        this.getHomePageResources();
         this.fetchExistingClient();
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
       }else{
+        console.log("user not authenticated...");
         //This can run even if we have a cached user who is just not authenticated
         this.signUpAnonymously();
+        this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
       }
     })
   }
@@ -145,40 +150,21 @@ export class HomePage {
   //Authenticate on firebase but check also if there's a client saved offline and allow this client to use the authstate
   signUpAnonymously(){
     this.authService.signUpAnonymously().then(dat =>{
+      console.log("User is now authenticated...");
       this.getHomePageResources();
-      //check if we have a client saved offline
       this.user.uid = dat.user.uid;
-      this.storage_svc.getUID()
-      .then(data =>{
-        if(data && data.length > 0){
-          this.user.uid = data;
-          this.fetchExistingClient();
-        }else{
-          this.user.uid = dat.user.uid;
-          this.user.user_type = "client";
-          this.user_svc.createClient(this.user)
-          .then(() =>{
-            //this.updateUserFCM();
-            this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-            //if someone is coming from a link to see a room>>>> navigate to room
-            this.navigateToRoomFromLink()
-          })
-          .catch(err => {
-            console.log(err)
-            this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-          })
-          //We already have enough information to save client offline
-          this.saveUserOffline();
-        }
+      this.user.user_type = "client";
+      this.user_svc.createClient(this.user)
+      .then(() =>{
+        //this.updateUserFCM();
+        //if someone is coming from a link to see a room>>>> navigate to room
+        this.navigateToRoomFromLink()
       })
       .catch(err => {
-        this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
         console.log(err)
       })
     })
     .catch(err =>{
-      this.ionic_component_svc.dismissLoading()
-      .catch(err => console.log(err))
       console.log(err)
     })
   }
@@ -207,73 +193,55 @@ export class HomePage {
     this.router.navigate(['/profile', {'client_id': this.user.uid}]);
   }
 
-  fetchExistingClient(){
-    //console.log("fetching existing user...");
-    this.storage_svc.getUID()
-    .then(_uid =>{
-      //if there's a client already associated with device, authenticate that particular client instead of a new auth
-      if(_uid){
-        //console.log("got cached client...", _uid)
-        this.user.uid = _uid;
-        this.client_subs = this.user_svc.getClient(this.user.uid)
-        .subscribe((u) =>{
-          if(u){
-            //console.log("Got persisted client...", u)
-            this.user = this.user_init_svc.copyClient(u);
-            //this.updateUserFCM()
-            this.saveUserType(); //If no user type was saved, save it
-            this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-            this.navigateToRoomFromLink();
-            /* if(this.user.current_job != ""){
-              this.searchfeed_svc.getSearch(this.user.current_job)
-              .pipe(take(1))
-              .subscribe(sch =>{
-                if(sch){
-                  this.present_search = true;
-                  this.search = this.searchfeed_svc.copySearch(sch)
-                  //if()
-                  this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-                  //if someone is coming from a link to see a room>>>> navigate to room
-                  this.navigateToRoomFromLink()
-                }else{
-                  this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-                  //if someone is coming from a link to see a room>>>> navigate to room
-                  this.navigateToRoomFromLink()
-                }
-              })
+  fetchExistingClient(){ 
+    console.log("Fetching existing client...", this.user.uid)
+    this.client_subs = this.user_svc.getClient(this.user.uid)
+    .subscribe((u) =>{
+      if(u){
+        //console.log("Got persisted client...", u)
+        this.user = this.user_init_svc.copyClient(u);
+        //this.updateUserFCM()
+        this.navigateToRoomFromLink();
+        /* if(this.user.current_job != ""){
+          this.searchfeed_svc.getSearch(this.user.current_job)
+          .pipe(take(1))
+          .subscribe(sch =>{
+            if(sch){
+              this.present_search = true;
+              this.search = this.searchfeed_svc.copySearch(sch)
+              //if()
+              this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+              //if someone is coming from a link to see a room>>>> navigate to room
+              this.navigateToRoomFromLink()
             }else{
               this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
               //if someone is coming from a link to see a room>>>> navigate to room
               this.navigateToRoomFromLink()
-            } */
-          }else{
-            this.user.user_type = "client";
-            //console.log("Cached client was not persited on db...persisting: ", this.user)
-            this.user_svc.createClient(this.user)
-            .then(val => {
-              //this.updateUserFCM()
-              this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-              //if someone is coming from a link to see a room>>>> navigate to room
-              this.navigateToRoomFromLink()
-            })
-            .catch(err => {
-              this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-              console.log(err)
-            })
-          }
-        })
+            }
+          })
+        }else{
+          this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
+          //if someone is coming from a link to see a room>>>> navigate to room
+          this.navigateToRoomFromLink()
+        } */
       }else{
-        //console.log("No client cached, signing up anonymously")
-        this.signUpAnonymously();
+        //If the logged on user is not persited on the database
+        console.log("User loggeed on but does not exist on the database");
+        this.user.user_type = "client";
+        //console.log("Cached client was not persited on db...persisting: ", this.user)
+        this.user_svc.createClient(this.user)
+        .then(val => {
+          //if someone is coming from a link to see a room>>>> navigate to room
+          this.navigateToRoomFromLink()
+        })
+        .catch(err => {
+          console.log(err)
+        })
       }
-    })
-    .catch(err => {
-      this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-      console.log(err)
     })
   }
 
-  saveUserOffline(){
+  /* saveUserOffline(){
     this.storage_svc.getUID()
     .then(val =>{
       if(!val) this.storage_svc.setUser(this.user);
@@ -281,7 +249,7 @@ export class HomePage {
     .catch(err =>{
       console.log(err)
     })
-  }
+  } */
 
   navigateToRoomFromLink(){
     if(this.activated_route.snapshot.paramMap.get('room_id')){
@@ -290,13 +258,13 @@ export class HomePage {
     }
   }
 
-  saveUserType(){
+ /*  saveUserType(){
     this.storage_svc.getUserType()
     .then(val =>{
       if(!val) this.storage_svc.setUserType()
     })
     .catch(err => console.log(err))
-  }
+  } */
 
   //Get banners and recently modified places
   getHomePageResources(){

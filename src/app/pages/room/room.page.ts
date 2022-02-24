@@ -1,6 +1,5 @@
 import { Component} from '@angular/core';
 import { ActivatedRoute , Router} from '@angular/router';
-import { ModalController} from '@ionic/angular';
 import { UserService } from '../../services/user.service';
 import { IonicComponentService} from '../../services/ionic-component.service';
 import { Observable } from 'rxjs';
@@ -11,6 +10,7 @@ import { FileUpload } from 'src/app/models/file-upload.model';
 import { PropertiesService } from '../../object-init/properties.service';
 import { Client } from 'src/app/models/client.model';
 import { UsersService } from '../../object-init/users.service';
+import { AuthService } from '../../services/auth.service';
 //import { RoomSearch } from 'src/app/models/room-search.model';
 
 @Component({
@@ -59,8 +59,8 @@ export class RoomPage {
       private activatedRoute: ActivatedRoute,
       private user_init_svc: UsersService,
       public router: Router,
+      private authService: AuthService,
       private ionicComponentService: IonicComponentService,
-      private modalController: ModalController,
       private room_svc: RoomService,
       private property_svc: PropertiesService
   ) { 
@@ -69,14 +69,34 @@ export class RoomPage {
   }
 
   ionViewWillEnter(){
+    this.ionicComponentService.presentLoading();
+    this.authService.getAuthenticatedUser()
+    .pipe(take(1))
+    .subscribe(usr =>{
+      console.log(usr)
+      if(usr && usr.uid){
+        //This will run if we have an authenticated user
+        this.client.uid = usr.uid;
+        this.fetchExistingClient();
+        this.fetchRoomDetails();
+        this.ionicComponentService.dismissLoading().catch(err => console.log(err))
+      }else{
+        console.log("user not authenticated...");
+        //This can run even if we have a cached user who is just not authenticated
+        this.signUpAnonymously();
+        this.ionicComponentService.dismissLoading().catch(err => console.log(err))
+      }
+    })
+  }
+  
+  fetchRoomDetails(){
     if(this.activatedRoute.snapshot.paramMap.get("room_id")){
-      this.ionicComponentService.presentLoading()
+      
       this.room_svc.getRoom(this.activatedRoute.snapshot.paramMap.get('room_id'))
       .pipe(take(1))
       .subscribe(rm =>{
         this.room = rm;
         this.rooms = this.room_svc.getPropertyRooms(rm.property.address)
-        this.ionicComponentService.dismissLoading().catch(err => console.log(err))
 
         this.room.pictures.forEach(p =>{
           this.pictures.push(p);
@@ -89,15 +109,43 @@ export class RoomPage {
         })
       })
     }
+  }
+  
+  fetchExistingClient(){ 
+    console.log("Fetching existing client...", this.client.uid)
+    this.userService.getClient(this.client.uid)
+    .subscribe((u) =>{
+      if(u){
+        //console.log("Got persisted client...", u)
+        this.client = this.user_init_svc.copyClient(u);
+      }else{
+        //If the logged on user is not persited on the database
+        console.log("User loggeed on but does not exist on the database");
+        this.client.user_type = "client";
+        //console.log("Cached client was not persited on db...persisting: ", this.user)
+        this.userService.createClient(this.client)
+        .catch(err => {
+          console.log(err)
+        })
+      }
+    })
+  }
 
-    if(this.activatedRoute.snapshot.paramMap.get("client_id")){
-      this.client_id = this.activatedRoute.snapshot.paramMap.get("client_id");
-      this.userService.getClient(this.client_id)
-      .pipe(take(1))
-      .subscribe(clt =>{
-        this.client = this.user_init_svc.copyClient(clt);
+  //Authenticate on firebase but check also if there's a client saved offline and allow this client to use the authstate
+  signUpAnonymously(){
+    this.authService.signUpAnonymously().then(dat =>{
+      console.log("User is now authenticated...");
+      this.client.uid = dat.user.uid;
+      this.client.user_type = "client";
+      this.fetchRoomDetails();
+      this.userService.createClient(this.client)
+      .catch(err => {
+        console.log(err)
       })
-    }
+    })
+    .catch(err =>{
+      console.log(err)
+    })
   }
 
   updateDisplayPicLoaded(){
