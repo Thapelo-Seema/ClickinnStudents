@@ -176,14 +176,14 @@ export class RoomService {
   }
 
   getRecentlyModified(){
-    return this.afs.collection<RoomPreview>('RoomPreviews', ref =>
+    return this.afs.collection<Room>('Rooms', ref =>
     ref.where("available", "==", true).orderBy('time_uploaded', 'desc')
     .limit(30))
     .valueChanges();
   }
 
   getRecentlyUpdated(){
-    return this.afs.collection<RoomPreview>('RoomPreviews', ref =>
+    return this.afs.collection<Room>('Rooms', ref =>
     ref.where("available", "==", true).orderBy('time_uploaded', 'desc')
     .limit(30))
     .valueChanges();
@@ -205,19 +205,19 @@ export class RoomService {
   }
 
   createRoomPreview(room: RoomPreview){
-    return this.afs.collection<RoomPreview>('RoomPreviews').doc(room.room_id).set(room);
+    return this.afs.collection<RoomPreview>('Rooms').doc(room.room_id).set(room);
   }
 
   createPropertyPreview(property: PropertyPreview){
-    return this.afs.collection<PropertyPreview>('PropertyPreviews').doc(property.property_id).set(property);
+    return this.afs.collection<PropertyPreview>('Propertys').doc(property.property_id).set(property);
   }
 
   updateRoomPreview(room: RoomPreview){
-    return this.afs.collection<RoomPreview>('RoomPreviews').doc(room.room_id).update(room);
+    return this.afs.collection<RoomPreview>('Rooms').doc(room.room_id).update(room);
   }
 
   updatePropertyPreview(property: PropertyPreview){
-    return this.afs.collection<PropertyPreview>('PropertyPreviews').doc(property.property_id).update(property);
+    return this.afs.collection<PropertyPreview>('Propertys').doc(property.property_id).set(property);
   }
   
 }
