@@ -73,7 +73,6 @@ export class RoomPage {
     this.authService.getAuthenticatedUser()
     .pipe(take(1))
     .subscribe(usr =>{
-      console.log(usr)
       if(usr && usr.uid){
         //This will run if we have an authenticated user
         this.client.uid = usr.uid;
@@ -81,23 +80,23 @@ export class RoomPage {
         this.fetchRoomDetails();
         this.ionicComponentService.dismissLoading().catch(err => console.log(err))
       }else{
-        console.log("user not authenticated...");
-        //This can run even if we have a cached user who is just not authenticated
-        this.signUpAnonymously();
+        this.signUpAnonymouslyAndFetchRoomDetails();
         this.ionicComponentService.dismissLoading().catch(err => console.log(err))
       }
+    },
+    err =>{
+      this.signUpAnonymouslyAndFetchRoomDetails();
+      this.ionicComponentService.dismissLoading().catch(err => console.log(err))
     })
   }
   
   fetchRoomDetails(){
     if(this.activatedRoute.snapshot.paramMap.get("room_id")){
-      
       this.room_svc.getRoom(this.activatedRoute.snapshot.paramMap.get('room_id'))
       .pipe(take(1))
       .subscribe(rm =>{
         this.room = rm;
         this.rooms = this.room_svc.getPropertyRooms(rm.property.address)
-
         this.room.pictures.forEach(p =>{
           this.pictures.push(p);
         });
@@ -112,7 +111,7 @@ export class RoomPage {
   }
   
   fetchExistingClient(){ 
-    console.log("Fetching existing client...", this.client.uid)
+    //console.log("Fetching existing client...", this.client.uid)
     this.userService.getClient(this.client.uid)
     .subscribe((u) =>{
       if(u){
@@ -120,7 +119,7 @@ export class RoomPage {
         this.client = this.user_init_svc.copyClient(u);
       }else{
         //If the logged on user is not persited on the database
-        console.log("User loggeed on but does not exist on the database");
+        //console.log("User loggeed on but does not exist on the database");
         this.client.user_type = "client";
         //console.log("Cached client was not persited on db...persisting: ", this.user)
         this.userService.createClient(this.client)
@@ -132,9 +131,9 @@ export class RoomPage {
   }
 
   //Authenticate on firebase but check also if there's a client saved offline and allow this client to use the authstate
-  signUpAnonymously(){
+  signUpAnonymouslyAndFetchRoomDetails(){
     this.authService.signUpAnonymously().then(dat =>{
-      console.log("User is now authenticated...");
+      //console.log("User is now authenticated...");
       this.client.uid = dat.user.uid;
       this.client.user_type = "client";
       this.fetchRoomDetails();

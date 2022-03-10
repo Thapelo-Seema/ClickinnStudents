@@ -24,16 +24,6 @@ import { RoomPreview } from 'src/app/models/room-preview.model';
 })
 export class HomePage {
 
-  //Slider configuration 
-  slideOptsOne = {
-    initialSlide: 0,
-    //slidesPerView: 1,
-    slidesPerView: 1,
-    spaceBetween: 30,
-    freeMode: true,
-    //autoplay: true
-  };
-
   slideOption = {
     slidesPerView: 'auto',
     grabCursor: true,
@@ -45,22 +35,13 @@ export class HomePage {
     grabCursor: true
   };
 
-  //slider config for banner
-  bannerSlideOption = {
-    slidesPerView: 'auto',
-    grabCursor: true,
-    //autoplay: true,
-  };
-
   //********* Observable *********/
-  //categories: Observable<any[]>; //the different roles on the platform 
   recommended: Observable<RoomPreview[]>;  //recommended properties (reses/accommmodations/places)
   banners: Observable<any[]>;  //informational banners at the top
 
   //*******Own varibales */
   present_search: boolean = false;
   user: Client;
-  //search: RoomSearch;
   area_search: RoomSearch;
   client_subs: any;
   search_subs: any;
@@ -88,16 +69,16 @@ export class HomePage {
     this.authService.getAuthenticatedUser()
     .pipe(take(1))
     .subscribe(usr =>{
-      console.log(usr)
+      //console.log(usr)
       if(usr && usr.uid){
-        console.log("user authenticated...");
+        //console.log("user authenticated...");
         //This will run if we have an authenticated user
         this.user.uid = usr.uid;
         this.getHomePageResources();
         this.fetchExistingClient();
         this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
       }else{
-        console.log("user not authenticated...");
+        //console.log("user not authenticated...");
         //This can run even if we have a cached user who is just not authenticated
         this.signUpAnonymously();
         this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
@@ -155,35 +136,11 @@ export class HomePage {
       this.user.uid = dat.user.uid;
       this.user.user_type = "client";
       this.user_svc.createClient(this.user)
-      .then(() =>{
-        //this.updateUserFCM();
-        //if someone is coming from a link to see a room>>>> navigate to room
-        this.navigateToRoomFromLink()
-      })
-      .catch(err => {
-        console.log(err)
-      })
     })
     .catch(err =>{
       console.log(err)
     })
   }
-
-  /* updateUserFCM(){
-    this.af_messaging.requestToken.pipe(take(1))
-    .subscribe(token =>{
-      if(token){
-        if(this.user.fcm_token != token){
-          this.user.fcm_token = token;
-          console.log(token)
-          this.user_svc.updateClient(this.user);
-        }
-      }
-    },
-    err =>{
-      console.log(err);
-    })
-  } */
 
   updateDisplayPicLoaded(){
     this.user.dp_loaded = true;
@@ -200,87 +157,19 @@ export class HomePage {
       if(u){
         //console.log("Got persisted client...", u)
         this.user = this.user_init_svc.copyClient(u);
-        //this.updateUserFCM()
-        this.navigateToRoomFromLink();
-        /* if(this.user.current_job != ""){
-          this.searchfeed_svc.getSearch(this.user.current_job)
-          .pipe(take(1))
-          .subscribe(sch =>{
-            if(sch){
-              this.present_search = true;
-              this.search = this.searchfeed_svc.copySearch(sch)
-              //if()
-              this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-              //if someone is coming from a link to see a room>>>> navigate to room
-              this.navigateToRoomFromLink()
-            }else{
-              this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-              //if someone is coming from a link to see a room>>>> navigate to room
-              this.navigateToRoomFromLink()
-            }
-          })
-        }else{
-          this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
-          //if someone is coming from a link to see a room>>>> navigate to room
-          this.navigateToRoomFromLink()
-        } */
       }else{
         //If the logged on user is not persited on the database
-        console.log("User loggeed on but does not exist on the database");
+        //console.log("User loggeed on but does not exist on the database");
         this.user.user_type = "client";
-        //console.log("Cached client was not persited on db...persisting: ", this.user)
-        this.user_svc.createClient(this.user)
-        .then(val => {
-          //if someone is coming from a link to see a room>>>> navigate to room
-          this.navigateToRoomFromLink()
-        })
-        .catch(err => {
-          console.log(err)
-        })
       }
     })
   }
-
-  /* saveUserOffline(){
-    this.storage_svc.getUID()
-    .then(val =>{
-      if(!val) this.storage_svc.setUser(this.user);
-    })
-    .catch(err =>{
-      console.log(err)
-    })
-  } */
-
-  navigateToRoomFromLink(){
-    if(this.activated_route.snapshot.paramMap.get('room_id')){
-      let room_id = this.activated_route.snapshot.paramMap.get('room_id');
-      this.router.navigate(['/room', {'room_id': room_id, 'client_id': this.user.uid}])
-    }
-  }
-
- /*  saveUserType(){
-    this.storage_svc.getUserType()
-    .then(val =>{
-      if(!val) this.storage_svc.setUserType()
-    })
-    .catch(err => console.log(err))
-  } */
 
   //Get banners and recently modified places
   getHomePageResources(){
     this.banners = this.room_svc.getBanners();
     this.recommended = this.room_svc.getRecentlyModified();
   }
-
-  /* gotoSearch(sch: RoomSearch){
-    if( sch.agent && sch.agent.contacts.indexOf(this.user.uid) != -1){
-      let index = sch.agent.contacts.indexOf(this.user.uid);
-      let thread_id = sch.agent.thread_ids[index];
-      this.router.navigate(['/chat', {'thread_id': thread_id, 'search_id': sch.id}])
-    }else{
-      this.router.navigate(['/agent-scanning', {'search_id': sch.id}])
-    }
-  } */
 
   //Open accommodation search modal
   openSearchModal(client_id) {
@@ -306,17 +195,5 @@ export class HomePage {
     this.router.navigate(['/room', {'room_id': accommodationId, 'client_id': this.user.uid}])
     //this.ionic_component_svc.dismissLoading().catch(err => console.log(err))
   }
-
-  /* gotoSignin(){
-    this.router.navigateByUrl('/signin');
-  }
-
-  gotoAppointments(){
-    this.router.navigate(['/appointments', {'client_id': this.user.uid}])
-  }
-
-  gotoChats(){
-    this.router.navigate(['/chats', {'client_id': this.user.uid}])
-  } */
 
 }
